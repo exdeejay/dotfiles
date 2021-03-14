@@ -8,6 +8,7 @@ echo "Installing dotfiles..."
 
 
 
+
 if [ ! -d "backup" ]; then
 	mkdir backup
 fi
@@ -48,6 +49,9 @@ if [ ! -a "$HOME/bin" ]; then
 	ln -s "$DOTFILES_DIR/bin" "$HOME/bin"
 fi
 
+if [ ! -d "$HOME/.bash_include" ]; then
+	mkdir "$HOME/.bash_include"
+fi
 
 
 echo "done"

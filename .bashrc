@@ -4,6 +4,8 @@ case $- in
       *) return;;
 esac
 
+DOTFILES_DIR="$(dirname "$(realpath ".bashrc")")"
+
 # don't put duplicate lines or lines starting with space in the history.
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
@@ -40,6 +42,15 @@ xterm*|rxvt*)
 *)
     ;;
 esac
+
+
+if [ -d "$HOME/.bash_include" ]; then
+	for f in $(find "$HOME/.bash_include" -type f); do
+		source "$f"
+	done
+fi
+
+
 
 # enable color support of ls and also add handy aliases
 alias ls='ls --color=auto'
