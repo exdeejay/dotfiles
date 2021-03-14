@@ -19,7 +19,11 @@ for dotfile in .*; do
 			if [ -a "$HOME/$dotfile" ]; then
 				mv "$HOME/$dotfile" "backup/$dotfile.bak"
 			fi
-			ln -s "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
+			if [ "$OS_TYPE" == "msys" ]; then
+				cp "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
+			else
+				ln -s "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
+			fi
 			;;
 	esac
 done

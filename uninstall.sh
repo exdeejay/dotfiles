@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 
 cd "$(dirname $0)"
-
 DOTFILES_DIR="$(pwd)"
+
+if [ "$OSTYPE" == "msys" ]; then
+	echo "!!! VERY DANGER !!!"
+	echo "Not implemented yet! May remove stuff you need!"
+	echo "Exiting..."
+	return
+fi
+
 
 echo "Removing dotfiles..."
 
