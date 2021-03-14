@@ -1,0 +1,16 @@
+set ignorecase
+set smartcase
+
+set number
+set hlsearch
+
+set hidden
+set splitbelow
+set splitright
+
+set tabstop=4
+set shiftwidth=4
+set autoindent
+
+set mouse=a
+set ttymouse=sgr
