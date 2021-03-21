@@ -60,3 +60,8 @@ alias egrep='egrep --color=auto'
 alias ..='cd ..'
 alias cd..='cd ..'
 
+if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then
+	tmux attach-session -t ssh || tmux new-session -s ssh
+	exit
+fi
+

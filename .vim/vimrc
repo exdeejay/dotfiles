@@ -1,6 +1,8 @@
 set ignorecase
 set smartcase
 
+set backspace=indent,eol,start
+
 set number
 set hlsearch
 
@@ -14,3 +16,10 @@ set autoindent
 
 set mouse=a
 set ttymouse=sgr
+
+nmap <Leader>s :source $MYVIMRC
+nmap <Leader>v :e $MYVIMRC
+
+map <F7> gg=G<C-o><C-o>
+
+
