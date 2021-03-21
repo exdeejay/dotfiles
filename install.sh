@@ -12,12 +12,13 @@ echo "Installing dotfiles..."
 if [ ! -d "backup" ]; then
 	mkdir backup
 fi
-for dotfile in .*; do
+for dotfile in .* bin; do
 	case $dotfile in
-		.|..|*.git*) continue;;
+		.|..|.git|.gitignore) continue;;
 		*)
 			if [ -a "$HOME/$dotfile" ]; then
-				mv "$HOME/$dotfile" "backup/$dotfile.bak"
+				rm -f "backup/$dotfile.bak"
+				mv -v "$HOME/$dotfile" "backup/$dotfile.bak"
 			fi
 			if [ "$OS_TYPE" == "msys" ]; then
 				cp "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
@@ -48,10 +49,6 @@ fi
 unset set_git_creds
 
 
-
-if [ ! -a "$HOME/bin" ]; then
-	ln -s "$DOTFILES_DIR/bin" "$HOME/bin"
-fi
 
 if [ ! -d "$HOME/.bash_include" ]; then
 	mkdir "$HOME/.bash_include"
