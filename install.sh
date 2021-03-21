@@ -17,7 +17,7 @@ for dotfile in .* bin; do
 		.|..|.git|.gitignore) continue;;
 		*)
 			if [ -a "$HOME/$dotfile" ]; then
-				rm -f "backup/$dotfile.bak"
+				rm -rf "backup/$dotfile.bak"
 				mv -v "$HOME/$dotfile" "backup/$dotfile.bak"
 			fi
 			if [ "$OS_TYPE" == "msys" ]; then
