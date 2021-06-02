@@ -60,9 +60,19 @@ alias egrep='egrep --color=auto'
 alias ..='cd ..'
 alias cd..='cd ..'
 
+detach() {
+	KEEP_SESSION=yes
+	tmux detach
+}
+
+reattach() {
+	unset KEEP_SESSION
+	tmux attach-session -t ssh || tmux new-session -s ssh
+}
+
 if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then
 	tmux attach-session -t ssh || tmux new-session -s ssh
-	if [[ ! -a "$HOME/.keep_session" ]]; then
+	if [[ -n "$KEEP_SESSION" ]]; then
 		exit
 	fi
 fi
