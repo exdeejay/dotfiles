@@ -1,8 +1,5 @@
 # If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+[[ $- =~ i ]] || return
 
 DOTFILES_DIR="$(dirname "$(realpath ".bashrc")")"
 
@@ -61,19 +58,20 @@ alias ..='cd ..'
 alias cd..='cd ..'
 
 detach() {
-	KEEP_SESSION=yes
+	touch "/tmp/${USER}_tmux_keep_session"
 	tmux detach
+	KEEP_SESSION=yes
 }
 
 reattach() {
-	unset KEEP_SESSION
-	tmux attach-session -t ssh || tmux new-session -s ssh
+	rm -f "/tmp/${USER}_tmux_keep_session"
+	if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then
+		tmux attach-session -t ssh || tmux new-session -s ssh
+		if [[ ! -e "/tmp/${USER}_tmux_keep_session" ]]; then
+			exit
+		fi
+	fi
 }
 
-if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then
-	tmux attach-session -t ssh || tmux new-session -s ssh
-	if [[ -n "$KEEP_SESSION" ]]; then
-		exit
-	fi
-fi
+reattach
 
