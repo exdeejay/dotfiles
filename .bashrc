@@ -21,6 +21,12 @@ shopt -s checkwinsize
 # match all files and zero or more directories and subdirectories.
 shopt -s globstar
 
+# Automatically cd without prepending cd
+shopt -s autocd
+
+# Prevent shell redirection from overwriting files (use >| to override)
+set -o noclobber
+
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
@@ -54,6 +60,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias diff='diff --color=auto'
+alias ip='ip -c'
 
 alias ..='cd ..'
 alias cd..='cd ..'
