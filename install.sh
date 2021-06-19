@@ -12,7 +12,7 @@ echo "Installing dotfiles..."
 if [ ! -d "backup" ]; then
 	mkdir backup
 fi
-for dotfile in .* bin; do
+for dotfile in .*; do
 	case $dotfile in
 		.|..|.git|.gitignore) continue;;
 		*)
