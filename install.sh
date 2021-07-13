@@ -2,9 +2,9 @@
 
 readYN() {
 	selection="notset"
-	while [[ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]]; do
-		printf "$1: "
-		read -e set_git_creds
+	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
+		printf "$1: " >&2
+		read -e selection
 	done
 	case "${selection,,}" in
 		y) echo 1;;

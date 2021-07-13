@@ -1,0 +1,6 @@
+[submodule ".tmux/plugins/tmux-suspend"]
+	path = .tmux/plugins/tmux-suspend
+	url = https://github.com/MunifTanjim/tmux-suspend
+[submodule ".tmux/plugins/tmux-mode-indicator"]
+	path = .tmux/plugins/tmux-mode-indicator
+	url = https://github.com/MunifTanjim/tmux-mode-indicator
