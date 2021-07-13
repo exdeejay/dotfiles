@@ -65,21 +65,13 @@ alias ip='ip -c'
 alias ..='cd ..'
 alias cd..='cd ..'
 
-detach() {
-	touch "/tmp/${USER}_tmux_keep_session"
-	tmux detach
-	KEEP_SESSION=yes
-}
+alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
 
-reattach() {
-	rm -f "/tmp/${USER}_tmux_keep_session"
-	if [ -z "$TMUX" ] && [ -n "$SSH_TTY" ] && [[ $- =~ i ]]; then
-		tmux attach-session -t ssh || tmux new-session -s ssh
-		if [[ ! -e "/tmp/${USER}_tmux_keep_session" ]]; then
-			exit
-		fi
+attach() {
+	if [ -z "$TMUX" ] && [[ $- =~ i ]]; then
+		tmux has && exec tmux attach || exec tmux
 	fi
 }
 
-reattach
+[ -z "$DETACH" ] && attach || unset DETACH
 

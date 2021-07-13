@@ -1,14 +1,24 @@
 #!/usr/bin/env bash
 
+readYN() {
+	selection="notset"
+	while [[ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]]; do
+		printf "$1: "
+		read -e set_git_creds
+	done
+	case "${selection,,}" in
+		y) echo 1;;
+		n) echo 0;;
+		*) echo 2;;
+	esac
+}
+
 cd "$(dirname $0)"
 
-DOTFILES_DIR="$(pwd)"
+DOTFILES_DIR="$PWD"
 
+echo "Backing up existing dotfiles to $(basename $PWD)/backup"
 echo "Installing dotfiles..."
-
-
-
-
 if [ ! -d "backup" ]; then
 	mkdir backup
 fi
@@ -30,13 +40,7 @@ for dotfile in .*; do
 done
 
 
-set_git_creds="notset"
-while [ "$set_git_creds" != "y" -a "$set_git_creds" != "n" -a "$set_git_creds" != "" ]; do
-	printf 'Set git username and email? (y/[n]): '
-	read -e set_git_creds
-done
-
-if [ "$set_git_creds" == "y" ]; then
+if [[ $(readYN "set git username and email? [yN]") == 1 ]]; then
 	printf "Username: "
 	read -e git_username
 	printf "Email: "
@@ -46,14 +50,12 @@ if [ "$set_git_creds" == "y" ]; then
 	unset git_username
 	unset git_email
 fi
-unset set_git_creds
-
 
 
 if [ ! -d "$HOME/.bash_include" ]; then
 	mkdir "$HOME/.bash_include"
 fi
-
+touch "$HOME/.tmux.conf.local"
 
 echo "done"
 
