@@ -23,4 +23,3 @@ nmap <Leader>v :e $MYVIMRC
 
 map <F7> gg=G<C-o><C-o>
 
-
