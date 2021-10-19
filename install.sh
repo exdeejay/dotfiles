@@ -24,7 +24,7 @@ if [ ! -d "backup" ]; then
 fi
 for dotfile in .*; do
 	case $dotfile in
-		.|..|.git|.gitignore) continue;;
+		.|..|.git|.gitignore|.gitmodules) continue;;
 		*)
 			if [ -a "$HOME/$dotfile" ]; then
 				rm -rf "backup/$dotfile.bak"
