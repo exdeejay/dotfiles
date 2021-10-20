@@ -27,13 +27,16 @@ for dotfile in .*; do
 		.|..|.git|.gitignore|.gitmodules) continue;;
 		*)
 			if [ -a "$HOME/$dotfile" ]; then
+				if [[ "$(dirname "$(readlink "$HOME/$dotfile")")" == "$PWD" ]]; then
+					break
+				fi
 				rm -rf "backup/$dotfile.bak"
 				mv -v "$HOME/$dotfile" "backup/$dotfile.bak"
 			fi
 			if [ "$OS_TYPE" == "msys" ]; then
 				cp "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
 			else
-				ln -s "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
+				ln -sv "$DOTFILES_DIR/$dotfile" "$HOME/$dotfile"
 			fi
 			;;
 	esac
