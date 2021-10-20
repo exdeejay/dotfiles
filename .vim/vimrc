@@ -9,16 +9,17 @@ set hlsearch
 set hidden
 set splitbelow
 set splitright
-
-set tabstop=4
-set shiftwidth=4
-set autoindent
 set nowrap
+
+set tabstop=8
+set softtabstop=4
+set shiftwidth=4
+set noexpandtab
+set autoindent
+filetype plugin indent on
 
 set mouse=a
 set ttymouse=sgr
-
-filetype plugin indent on
 
 nmap <Leader>s :source $MYVIMRC
 nmap <Leader>v :e $MYVIMRC
