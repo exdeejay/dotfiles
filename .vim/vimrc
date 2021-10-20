@@ -18,6 +18,8 @@ set nowrap
 set mouse=a
 set ttymouse=sgr
 
+filetype plugin indent on
+
 nmap <Leader>s :source $MYVIMRC
 nmap <Leader>v :e $MYVIMRC
 
