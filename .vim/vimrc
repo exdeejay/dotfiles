@@ -11,18 +11,22 @@ set splitbelow
 set splitright
 set nowrap
 
-set tabstop=8
-set softtabstop=4
+"size of <tab>
+set tabstop=4
+"size of reindenting and << >> ==
 set shiftwidth=4
+"override filetype plugin (?)
 set noexpandtab
+"keep indentation of last line
 set autoindent
+"enable filetype plugin
+"plugin customization available in ~/.vim/after/ftplugin
 filetype plugin indent on
 
 set mouse=a
 set ttymouse=sgr
 
-nmap <Leader>s :source $MYVIMRC
-nmap <Leader>v :e $MYVIMRC
-
-map <F7> gg=G<C-o><C-o>
+"<Leader> is backslash (\)
+nmap <Leader>s :source $MYVIMRC<CR>
+nmap <Leader>v :e $MYVIMRC<CR>
 
