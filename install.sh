@@ -61,7 +61,7 @@ copyWithBackup() {
 	done
 }
 
-copyWithBackup "." "$HOME" ".git .gitignore .gitmodules backup TODO.md install.sh uninstall.sh"
+copyWithBackup "." "$HOME" ".git .gitignore .gitmodules bin backup TODO.md install.sh uninstall.sh"
 copyWithBackup "bin" "$HOME/.local/bin"
 
 
