@@ -5,7 +5,7 @@ fi
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
-	PATH="$HOME/.local/bin:$PATH"
+	PATH="$PATH:$HOME/.local/bin"
 fi
 
 export LESSHISTFILE='-'
@@ -20,4 +20,6 @@ export LESS_TERMCAP_us=$'\e[1;4;36m'
 
 export EDITOR=vi
 export VISUAL=vi
+
+export FZF_DEFAULT_OPTS='-m --reverse'
 
