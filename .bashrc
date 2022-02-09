@@ -65,6 +65,7 @@ alias gdb='gdb -q'
 
 alias ..='cd ..'
 alias cd..='cd ..'
+alias lsa='ls -A'
 
 alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
 
