@@ -46,7 +46,7 @@ copyWithBackup() {
 		# Check if file already exists
 		if [ -a "$target_dir/$file" ]; then
 			# Don't back up file if it's already symlinked here
-			[ "$(dirname "$(readlink "$target_dir/$file")")" == "$PWD" ] && continue
+			[ "$(dirname "$(readlink -f "$target_dir/$file")")" == "$PWD" ] && continue
 			# Copy file and overwrite old backup
 			rm -rf "$DOTFILES_DIR/backup/$relative_path/$file.bak"
 			mv -v "$target_dir/$file" "$DOTFILES_DIR/backup/$relative_path/$file.bak"
@@ -55,7 +55,7 @@ copyWithBackup() {
 		if [ "$OS_TYPE" == "msys" ]; then
 			cp "$file" "$target_dir/$file"
 		else
-			ln -sv "$DOTFILES_DIR/$relative_path/$file" "$target_dir/$file"
+			ln -sv "$(realpath -P "$DOTFILES_DIR/$relative_path/$file")" "$target_dir/$file"
 		fi
 	done
 }

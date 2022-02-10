@@ -3,6 +3,12 @@
 
 DOTFILES_DIR="$(dirname "$(realpath ".bashrc")")"
 
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+	PATH="$HOME/.local/bin:$PATH"
+fi
+
+
 # don't put duplicate lines or lines starting with space in the history.
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
@@ -76,7 +82,9 @@ lsa() {
 	ls
 }
 
-[ -n "$(which bat)" ] && alias cat='bat'
+if [ -n "$(which bat)" ]; then
+	alias cat='bat'
+fi
 
 alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
 
