@@ -66,8 +66,15 @@ alias gdb='gdb -q'
 alias ..='cd ..'
 alias cd..='cd ..'
 alias l='ls'
-alias lsa='ls -A'
 alias la='ls -A'
+
+lsa() {
+	echo '---  dotfiles  ---'
+	ls -d $(ls -A | grep '^\.[^\.].*')
+	echo
+	echo '--- main files ---'
+	ls
+}
 
 [ -n "$(which bat)" ] && alias cat='bat'
 
