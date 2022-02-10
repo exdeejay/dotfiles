@@ -76,10 +76,10 @@ alias la='ls -A'
 
 lsa() {
 	echo '---  dotfiles  ---'
-	ls -d $(ls -A | grep '^\.[^\.].*')
+	ls -d $@ $(ls -A | grep '^\.[^\.].*')
 	echo
 	echo '--- main files ---'
-	ls
+	ls $@
 }
 
 if [ -n "$(which bat)" ]; then
