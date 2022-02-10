@@ -111,10 +111,9 @@ lsa() {
 			if [ -n "$hiddenfiles" ]; then
 				echo '---  dotfiles  ---'
 				$LS -A $args $hiddenfiles
-				[ -n "$mainfiles" ] && echo
+				[ -n "$mainfiles" ] && echo -e '\n--- main files ---'
 			fi
 			if [ -n "$mainfiles" ]; then
-				echo '--- main files ---'
 				$LS -A $args $mainfiles
 			fi
 		fi
