@@ -73,7 +73,6 @@ alias ..='cd ..'
 alias cd..='cd ..'
 alias l='ls'
 alias la='ls -A'
-
 lsa() {
 	echo '---  dotfiles  ---'
 	ls -d $@ $(ls -A | grep '^\.[^\.].*')
@@ -82,10 +81,7 @@ lsa() {
 	ls $@
 }
 
-if [ -n "$(which bat)" ]; then
-	alias cat='bat'
-fi
-
+[ -n "$(which bat)" ] && alias cat='bat'
 alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
 
 attach() {
