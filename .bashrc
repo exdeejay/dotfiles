@@ -71,17 +71,67 @@ alias gdb='gdb -q'
 
 alias ..='cd ..'
 alias cd..='cd ..'
-alias l='ls'
+
 alias la='ls -A'
+alias ls='lsa'
+alias l='ls'
+
 lsa() {
-	HIDDENFILES="$(ls -A | egrep '\.([^\.]|.{2,})')"
-	if [ -n "$HIDDENFILES" ]; then
-		echo '---  dotfiles  ---'
-		ls -d $@ $HIDDENFILES
-		[ -n "$(ls)" ] && echo
+	LS='ls --color=auto'
+
+	args=''
+	mainfiles=''
+	hiddenfiles=''
+
+	# separate args into dash commands and actual files
+	for arg in $@; do
+		if echo $arg | egrep -q '^-'; then
+			args="$args $arg"
+		else
+			# split files into hidden and non-hidden
+			if echo $arg | egrep -q '^\.'; then
+				[ -z "$hiddenfiles" ] && hiddenfiles="$arg" || hiddenfiles="$hiddenfiles $arg"
+			else
+				[ -z "$mainfiles" ] && mainfiles="$arg" || mainfiles="$mainfiles $arg"
+			fi
+		fi
+	done
+
+	files="$mainfiles"
+	[ -n "$files" ] && files="$files $hiddenfiles" || files="$hiddenfiles"
+
+	# if files are specified, list only those files
+	if [[ -n "$files" ]]; then
+		# if only one file is specified, act like normal, but just in that directory
+		if echo "$files" | egrep -q '^(\S+|".+")$'; then
+			pushd "$files" &>/dev/null
+			lsa $args
+			popd &>/dev/null
+		else
+			if [ -n "$hiddenfiles" ]; then
+				echo '---  dotfiles  ---'
+				$LS -A $args $hiddenfiles
+				[ -n "$mainfiles" ] && echo
+			fi
+			if [ -n "$mainfiles" ]; then
+				echo '--- main files ---'
+				$LS -A $args $mainfiles
+			fi
+		fi
+	else
+		# no files specified, list and categorize files in current directory
+		hiddenfiles="$($LS -A | egrep '^\.([^\.]|.{2,})$')"
+		mainfiles="$($LS | egrep '^[^.]')"
+		if [ -n "$hiddenfiles" ]; then
+			echo '---  dotfiles  ---'
+			$LS -d $args $hiddenfiles
+			[ -n "$mainfiles" ] && echo
+		fi
+		if [ -n "$mainfiles" ]; then
+			echo '--- main files ---'
+			$LS $args
+		fi
 	fi
-	[ -n "$(ls)" ] && echo '--- main files ---'
-	ls $@
 }
 
 [ -n "$(which bat)" ] && alias cat='bat'
