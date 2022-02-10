@@ -3,7 +3,7 @@
 readYN() {
 	selection="notset"
 	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
-		printf "$1" >&2
+		printf "$1 " >&2
 		[ "${2,,}" == "y" ] && printf "[Yn]" >&2 || printf "[yN]" >&2
 		printf ": " >&2
 		read -e selection
@@ -35,7 +35,7 @@ removeLinks() {
 	target_dir=$1
 
 	for link in $(find "$target_dir" -maxdepth 1 -type l); do
-		if [ "$(dirname $(realpath "$link"))" == "$DOTFILES_DIR" ]; then
+		if [[ "$(dirname $(realpath "$link"))" =~ "$DOTFILES_DIR" ]]; then
 			rm -rf "$link"
 			echo "Removed $(basename "$link")"
 		fi

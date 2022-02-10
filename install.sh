@@ -3,7 +3,7 @@
 readYN() {
 	selection="notset"
 	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
-		printf "$1" >&2
+		printf "$1 " >&2
 		[ "${2,,}" == "y" ] && printf "[Yn]" >&2 || printf "[yN]" >&2
 		printf ": " >&2
 		read -e selection
@@ -35,19 +35,18 @@ echo "Installing dotfiles..."
 
 copyWithBackup() {
 
-	src_dir=$1
 	target_dir=$2
 	ignored=$3
 
-	cd -P "$src_dir"
+	cd -P "$1"
 
 	for file in $(ls -A); do
 		[[ "$ignored" =~ "$file" ]] && continue
+		relative_path=$(realpath --relative-to="$DOTFILES_DIR" .)
 		# Check if file already exists
 		if [ -a "$target_dir/$file" ]; then
 			# Don't back up file if it's already symlinked here
 			[ "$(dirname "$(readlink "$target_dir/$file")")" == "$PWD" ] && continue
-			relative_path=$(realpath --relative-to="$DOTFILES_DIR" "$src_dir")
 			# Copy file and overwrite old backup
 			rm -rf "$DOTFILES_DIR/backup/$relative_path/$file.bak"
 			mv -v "$target_dir/$file" "$DOTFILES_DIR/backup/$relative_path/$file.bak"

@@ -66,6 +66,9 @@ alias gdb='gdb -q'
 alias ..='cd ..'
 alias cd..='cd ..'
 alias lsa='ls -A'
+alias la='ls -A'
+
+[ -n "$(which bat)" ] && alias cat='bat'
 
 alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
 
