@@ -74,10 +74,13 @@ alias cd..='cd ..'
 alias l='ls'
 alias la='ls -A'
 lsa() {
-	echo '---  dotfiles  ---'
-	ls -d $@ $(ls -A | grep '^\.[^\.].*')
-	echo
-	echo '--- main files ---'
+	HIDDENFILES="$(ls -A | egrep '\.([^\.]|.{2,})')"
+	if [ -n "$HIDDENFILES" ]; then
+		echo '---  dotfiles  ---'
+		ls -d $@ $HIDDENFILES
+		[ -n "$(ls)" ] && echo
+	fi
+	[ -n "$(ls)" ] && echo '--- main files ---'
 	ls $@
 }
 
