@@ -65,6 +65,7 @@ alias gdb='gdb -q'
 
 alias ..='cd ..'
 alias cd..='cd ..'
+alias l='ls'
 alias lsa='ls -A'
 alias la='ls -A'
 
