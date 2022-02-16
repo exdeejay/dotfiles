@@ -1,3 +1,5 @@
+set nocompatible
+
 set ignorecase
 set smartcase
 
@@ -11,12 +13,15 @@ set splitbelow
 set splitright
 set nowrap
 
+set display=lastline
+
 set background=dark
 
 "size of <tab>
 set tabstop=4
 "size of reindenting and << >> ==
 set shiftwidth=4
+set shiftround
 "override filetype plugin (?)
 set noexpandtab
 "keep indentation of last line
@@ -24,9 +29,23 @@ set autoindent
 "enable filetype plugin
 "plugin customization available in ~/.vim/after/ftplugin
 filetype plugin indent on
+syntax on
+
+set ttyfast
+set lazyredraw
 
 set mouse=a
 set ttymouse=sgr
+
+set backup
+set backupdir=$HOME/.vim/files/backup/
+set backupext=-vimbackup
+set backupskip=
+set directory=$HOME/.vim/files/swap//
+set updatecount=100
+set undofile
+set undodir=$HOME/.vim/files/undo/
+set viminfo='100,n$HOME/.vim/files/info/viminfo
 
 "<Leader> is backslash (\)
 nmap <Leader>s :source $MYVIMRC<CR>

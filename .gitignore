@@ -1,2 +1,4 @@
 backup
 .vim/.netrwhist
+.vim/files/info/viminfo
+.vim/files/undo/*
