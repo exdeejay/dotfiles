@@ -48,6 +48,6 @@ set undodir=$HOME/.vim/files/undo/
 set viminfo='100,n$HOME/.vim/files/info/viminfo
 
 "<Leader> is backslash (\)
-nmap <Leader>s :source $MYVIMRC<CR>
-nmap <Leader>v :e $MYVIMRC<CR>
+nnoremap <Leader>s :source $MYVIMRC<CR>
+nnoremap <Leader>v :e $MYVIMRC<CR>
 
