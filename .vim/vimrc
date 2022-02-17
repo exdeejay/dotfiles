@@ -30,6 +30,7 @@ set autoindent
 "plugin customization available in ~/.vim/after/ftplugin
 filetype plugin indent on
 syntax on
+packadd! matchit
 
 set ttyfast
 set lazyredraw
