@@ -7,6 +7,6 @@
 [submodule ".vim/pack/vendor/start/nerdtree"]
 	path = .vim/pack/vendor/start/nerdtree
 	url = https://github.com/preservim/nerdtree.git
-[submodule ".vim/pack/bundle/start/cheat40"]
-	path = .vim/pack/bundle/start/cheat40
+[submodule ".vim/pack/vendor/start/cheat40"]
+	path = .vim/pack/vendor/start/cheat40
 	url = https://github.com/lifepillar/vim-cheat40.git
