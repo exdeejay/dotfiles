@@ -4,18 +4,12 @@
 [submodule ".tmux/plugins/tmux-mode-indicator"]
 	path = .tmux/plugins/tmux-mode-indicator
 	url = https://github.com/MunifTanjim/tmux-mode-indicator
-[submodule ".vim/pack/vendor/start/nerdtree"]
-	path = .vim/pack/vendor/start/nerdtree
-	url = https://github.com/preservim/nerdtree.git
-[submodule ".vim/pack/vendor/start/cheat40"]
-	path = .vim/pack/vendor/start/cheat40
-	url = https://github.com/lifepillar/vim-cheat40.git
-[submodule ".vim/pack/vendor/start/tmux-complete.vim"]
-	path = .vim/pack/vendor/start/tmux-complete.vim
-	url = https://github.com/wellle/tmux-complete.vim.git
 [submodule ".vim/pack/plugins/start/cheat40"]
 	path = .vim/pack/plugins/start/cheat40
 	url = https://github.com/lifepillar/vim-cheat40.git
 [submodule ".vim/pack/plugins/start/tmux-complete.vim"]
 	path = .vim/pack/plugins/start/tmux-complete.vim
 	url = https://github.com/wellle/tmux-complete.vim.git
+[submodule ".vim/pack/plugins/start/undotree"]
+	path = .vim/pack/plugins/start/undotree
+	url = https://github.com/mbbill/undotree.git
