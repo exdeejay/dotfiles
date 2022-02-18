@@ -1,4 +1,6 @@
 backup
 .vim/.netrwhist
+.vim/files/backup/*
 .vim/files/info/viminfo
 .vim/files/undo/*
+.vim/files/swap/*
