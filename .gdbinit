@@ -5,6 +5,6 @@ define init-gef
 end
 
 define init-pwndbg
-	source ~/.pwndbg/gdbinit.py
+	source /home/user/.pwndbg/gdbinit.py
 end
 

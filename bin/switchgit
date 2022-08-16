@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [[ "$(git config --global user.name)" != "exdeejay" ]]; then
+	git config --global user.name > $HOME/.saved_git_profile
+	git config --global user.email >> $HOME/.saved_git_profile
+	git config --global user.name exdeejay
+	git config --global user.email "13634296+exdeejay@users.noreply.github.com"
+	echo "Switched git"
+	echo "  user  = exdeejay"
+	echo "  email = 13634296+exdeejay@users.noreply.github.com"
+elif [[ -f "$HOME/.saved_git_profile" ]]; then
+	name="$(sed '1q;d' $HOME/.saved_git_profile)"
+	email="$(sed '2q;d' $HOME/.saved_git_profile)"
+	git config --global user.name "$name"
+	git config --global user.email "$email"
+	rm $HOME/.saved_git_profile
+	echo "Switched git profile"
+	echo "  user  = $name"
+	echo "  email = $email"
+else
+	echo "No saved git profile found"
+fi
+

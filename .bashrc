@@ -53,17 +53,7 @@ xterm*|rxvt*)
     ;;
 esac
 
-
-if [ -d "$HOME/.bash_include" ]; then
-	for f in $(find "$HOME/.bash_include" -type f); do
-		source "$f"
-	done
-fi
-
-
-
-# enable color support of ls and also add handy aliases
-alias ls='ls --color=auto'
+# enable color support of various commands
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias diff='diff --color=auto'
@@ -77,8 +67,15 @@ alias la='ls -A'
 alias ls='lsa'
 alias l='ls'
 
+# More formatted `ls` command, specifically to separate dotfiles and regular files
+# TODO: filenames with spaces in them don't work properly
 lsa() {
 	LS='ls --color=auto'
+
+	if [[ ! -t 1 ]]; then
+		\ls $@
+		return 0
+	fi
 
 	args=''
 	mainfiles=''
@@ -99,15 +96,19 @@ lsa() {
 	done
 
 	files="$mainfiles"
-	[ -n "$files" ] && files="$files $hiddenfiles" || files="$hiddenfiles"
+	if [[ -n "$files" && -n "$hiddenfiles" ]]; then
+		files="$files $hiddenfiles" 
+	elif [[ -n "$hiddenfiles" ]]; then
+		files="$hiddenfiles"
+	fi
 
 	# if files are specified, list only those files
 	if [[ -n "$files" ]]; then
 		# if only one file is specified, act like normal, but just in that directory
 		if echo "$files" | egrep -q '^(\S+|".+")$'; then
-			pushd "$files" &>/dev/null
+			pushd "$files" &> /dev/null
 			lsa $args
-			popd &>/dev/null
+			popd &> /dev/null
 		else
 			if [ -n "$hiddenfiles" ]; then
 				echo '---  dotfiles  ---'
@@ -134,6 +135,13 @@ lsa() {
 }
 
 [ -n "$(which bat)" ] && alias cat='bat'
+
+if [ -d "$HOME/.bash_include" ]; then
+	for f in $(find "$HOME/.bash_include" -type f); do
+		source "$f"
+	done
+fi
+
 alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
 
 attach() {
