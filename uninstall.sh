@@ -1,16 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-readYN() {
-	selection="notset"
-	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
-		printf "$1 " >&2
-		[ "${2,,}" == "y" ] && printf "[Yn]" >&2 || printf "[yN]" >&2
-		printf ": " >&2
-		read -e selection
-	done
-	[ "$selection" != "" ] && echo "${selection,,}" || echo "${2,,}"
-}
-
+# Since this script isn't guaranteed to be in $PWD, get accurate DOTFILES_DIR
 SOURCE=${BASH_SOURCE[0]}
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
 	DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
@@ -19,7 +9,19 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
-cd "$DOTFILES_DIR"
+# Remove all symbolic links in a directory pointing to anywhere in DOTFILES_DIR
+# Usage: removeLinks <targetdir>
+removeLinks() {
+	target_dir=$1
+
+	for link in $(find "$target_dir" -maxdepth 1 -type l); do
+		if [[ "$(dirname $(realpath "$link"))" =~ "$DOTFILES_DIR" ]]; then
+			rm "$link"
+			echo "Removed $(basename "$link")"
+		fi
+	done
+}
+
 
 if [ "$OSTYPE" == "msys" ]; then
 	echo "!!! VERY DANGER !!!"
@@ -28,22 +30,10 @@ if [ "$OSTYPE" == "msys" ]; then
 	return
 fi
 
-
 echo "Removing dotfiles..."
 
-removeLinks() {
-	target_dir=$1
-
-	for link in $(find "$target_dir" -maxdepth 1 -type l); do
-		if [[ "$(dirname $(realpath "$link"))" =~ "$DOTFILES_DIR" ]]; then
-			rm -rf "$link"
-			echo "Removed $(basename "$link")"
-		fi
-	done
-}
 
 removeLinks "$HOME"
-removeLinks "$HOME/.local/bin"
 
 echo "done"
 

@@ -1,5 +1,19 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+
+# Since this script isn't guaranteed to be in $PWD, get accurate DOTFILES_DIR
+SOURCE=${BASH_SOURCE[0]}
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+	DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+	SOURCE=$(readlink "$SOURCE")
+	[[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+
+
+# Prompt for a Y/N answer
+# Usage: readYN <question> [default answer y/n]
+# Returns: 'y' or 'n' depending on user input
 readYN() {
 	selection="notset"
 	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
@@ -11,60 +25,86 @@ readYN() {
 	[ "$selection" != "" ] && echo "${selection,,}" || echo "${2,,}"
 }
 
-SOURCE=${BASH_SOURCE[0]}
-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-	DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
-	SOURCE=$(readlink "$SOURCE")
-	[[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-done
-DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+# Backup and overwrite file with symlink
+# Usage: copyWithBackup <sourcefile> <destfile> ["backup"/"copy"]
+copyWithBackup() {
+	source_file=$1
+	target_file=$2
+	mode=$3
 
-cd "$DOTFILES_DIR"
+	# Don't do anything if the target is already a link to the source file
+	if [[ "$(readlink -f "$target_file")" != "$(realpath "$source_file")" ]]; then
+		# Back up the target file if it already exists
+		if [[ -e "$target_file" ]]; then
+			rm -rf "$DOTFILES_DIR/backup/$(basename "$target_file").bak"
+			mv -v "$target_file" "$DOTFILES_DIR/backup/$(basename "$target_file").bak"
+		fi
+
+		# Copy file if this is msys (no symlinks)
+		if [[ "$mode" == "copy" || "$OS_TYPE" == "msys" ]]; then
+			printf "copied "
+			cp -v "$source_file" "$target_file"
+		else # Symlink relatively otherwise
+			printf "linked "
+			ln -srv "$source_file" "$target_file"
+		fi
+	fi
+}
+
 
 if [ "$OS_TYPE" = "msys" ]; then
 	echo "!!WARNING!! MSYS is not fully supported, use at your own risk!"
 	[ $(readYN "Continue?" 'n') == 'n' ] && exit
 fi
 
-echo "Backing up existing dotfiles to $(basename $DOTFILES_DIR)/backup"
+echo "Updating submodules..."
+git submodule update --init --recursive
+
+echo "Existing dotfiles will be copied to $(basename $DOTFILES_DIR)/backup"
 echo "Installing dotfiles..."
 
-[ ! -d "backup" ] && mkdir backup
-[ ! -d "$HOME/.local/bin" ] && mkdir -p "$HOME/.local/bin"
-[ ! -d "backup/bin" ] && mkdir backup/bin
+# Create backup folders
+[ ! -d "$DOTFILES_DIR/backup" ] && mkdir "$DOTFILES_DIR/backup"
+[ ! -d "$DOTFILES_DIR/backup/bin" ] && mkdir "$DOTFILES_DIR/backup/bin"
 
-copyWithBackup() {
+# Copy all relevant dotfiles to the home directory
+ignored_files=".git .gitconfig .gitignore .gitmodules apt-dependencies bin backup TODO.md install.sh uninstall.sh"
+for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
+	if grep -q "$(basename "$file")" <<< "$ignored_files"; then
+		continue
+	fi
+	case "$(basename "$file")" in
+		.gitconfig.inc)
+			copyWithBackup "$file" "$HOME/.gitconfig" copy
+			;;
+		*)
+			copyWithBackup "$file" "$HOME/$(basename "$file")" backup
+			;;
+	esac
+done
 
-	target_dir=$2
-	ignored=$3
+# Install apt dependencies
+if [[ -n "$(which apt)" && $(readYN "install apt dependencies?" 'n') == 'y' ]]; then
+	packagelist="$DOTFILES_DIR/apt-dependencies"
+	sudo apt-get update
+	# sourced from https://askubuntu.com/questions/252734/apt-get-mass-install-packages-from-a-file
+	xargs -a <(awk '! /^ *(#|$)/' "$packagelist") -r -- sudo apt-get install -y
+fi
+# Install pwndbg
+if [[ ! -d "$HOME/.pwndbg" && $(readYN "install pwndbg?" 'y') == 'y' ]]; then
+	git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg
+	pushd $HOME/.pwndbg
+	./setup.sh
+	popd
+	sed -i '$d' "$HOME/.gdbinit"
+fi
+# Install gdb-gef
+if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "install gdb-gef?" 'y') == 'y' ]]; then
+	curl https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
+fi
 
-	cd -P "$1"
-
-	for file in $(ls -A); do
-		[[ "$ignored" =~ "$file" ]] && continue
-		relative_path=$(realpath --relative-to="$DOTFILES_DIR" .)
-		# Check if file already exists
-		if [ -a "$target_dir/$file" ]; then
-			# Don't back up file if it's already symlinked here
-			[ "$(dirname "$(readlink -f "$target_dir/$file")")" == "$PWD" ] && continue
-			# Copy file and overwrite old backup
-			rm -rf "$DOTFILES_DIR/backup/$relative_path/$file.bak"
-			mv -v "$target_dir/$file" "$DOTFILES_DIR/backup/$relative_path/$file.bak"
-		fi
-		# Copy file if this is msys (no symlinks)
-		if [ "$OS_TYPE" == "msys" ]; then
-			cp "$file" "$target_dir/$file"
-		else
-			ln -sv "$(realpath -P "$DOTFILES_DIR/$relative_path/$file")" "$target_dir/$file"
-		fi
-	done
-}
-
-copyWithBackup "." "$HOME" ".git .gitignore .gitmodules bin backup TODO.md install.sh uninstall.sh"
-copyWithBackup "bin" "$HOME/.local/bin"
-
-
-if [ $(readYN "set git username and email?" 'n') == 'y' ]; then
+# Optionally set custom git user info
+if [[ $(readYN "set git username and email?" 'n') == 'y' ]]; then
 	printf "Username: "
 	read -e git_username
 	printf "Email: "
@@ -73,9 +113,12 @@ if [ $(readYN "set git username and email?" 'n') == 'y' ]; then
 	git config --global user.email "$git_email"
 	unset git_username
 	unset git_email
+else
+	git config --global user.name "exdeejay"
+	git config --global user.email "13634296+exdeejay@users.noreply.github.com"
 fi
 
-
+# Create local bash folder for scripts to be included in .bashrc
 if [ ! -d "$HOME/.bash_include" ]; then
 	mkdir "$HOME/.bash_include"
 fi

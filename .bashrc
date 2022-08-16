@@ -5,8 +5,9 @@ DOTFILES_DIR="$(dirname "$(realpath ".bashrc")")"
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/.local/bin" ] ; then
-	PATH="$HOME/.local/bin:$PATH"
+	export PATH="$HOME/.local/bin:$PATH"
 fi
+export PATH="$DOTFILES_DIR/bin:$PATH"
 
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -141,5 +142,5 @@ attach() {
 	fi
 }
 
-[ -z "$DETACH" ] && attach || unset DETACH
+[[ -z "$DETACH" && -n "$(which tmux)" ]] && attach || unset DETACH
 
