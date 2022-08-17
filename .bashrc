@@ -98,7 +98,7 @@ lsa() {
 	# if files are specified, list only those files
 	if [[ ${#files[@]} != 0 ]]; then
 		# if only one file is specified, act like normal, but just in that directory
-		if [[ ${#files[@]} == 1 ]]; then
+		if [[ ${#files[@]} == 1 && -d "${files[0]}" ]]; then
 			pushd "${files[0]}" &> /dev/null
 			lsa "${args[@]}"
 			popd &> /dev/null
