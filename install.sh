@@ -102,6 +102,10 @@ fi
 if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "install gdb-gef?" 'y') == 'y' ]]; then
 	curl https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
 fi
+# Install asciinema
+if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "install asciinema?" 'y') == 'y' ]]; then
+	python3 -m pip install --user asciinema
+fi
 
 # Optionally set custom git user info
 if [[ $(readYN "set git username and email?" 'n') == 'y' ]]; then

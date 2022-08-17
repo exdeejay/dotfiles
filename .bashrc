@@ -15,6 +15,7 @@ HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=20000
 HISTIGNORE="&:ls:[bf]g:exit"
+[[ -z "$RECORD" && -n "$(which asciinema)" ]] && RECORD="yes"
 
 ## SHOPTS ##
 # append to the history file, don't overwrite it
@@ -135,11 +136,31 @@ if [ -d "$HOME/.bash_include" ]; then
 	done
 fi
 
-alias detach="tmux detach -E 'DETACH=yes $SHELL -li'"
+alias detach="tmux detach -E 'DETACH=yes RECORD=no $SHELL -li'"
+
+record_command() {
+	[[ ! -d "$HOME/.casts" ]] && mkdir "$HOME/.casts"
+	if [[ ! -d "$HOME/.casts/$(date -I)" ]]; then
+		for dir in "$(find "$HOME/.casts" -mindepth 1 -maxdepth 1 ! -iname '*.tar.gz')"; do
+			tar -C "$(dirname "$dir")" -czf "$dir.tar.gz" "$(basename "$dir")"
+			rm -r "$dir"
+		done
+		mkdir -p "$HOME/.casts/$(date -I)"
+	fi
+	CAST_OUTPUT="$HOME/.casts/$(date -I)/$(date -u +%T).cast"
+	asciinema rec -q -i 5 -c "$*" "$CAST_OUTPUT"
+	gzip "$CAST_OUTPUT"
+}
 
 attach() {
-	if [ -z "$TMUX" ] && [[ $- =~ i ]]; then
-		tmux has && exec tmux attach || exec tmux
+	if [[ -z "$TMUX" && "$-" =~ i ]]; then
+		if [[ "$RECORD" == "yes" ]]; then
+			tmux has || tmux new-session -d
+			record_command tmux attach
+			exit
+		else
+			tmux has && exec tmux attach || exec tmux
+		fi
 	fi
 }
 
