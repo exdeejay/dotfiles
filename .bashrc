@@ -68,68 +68,61 @@ alias ls='lsa'
 alias l='ls'
 
 # More formatted `ls` command, specifically to separate dotfiles and regular files
-# TODO: filenames with spaces in them don't work properly
 lsa() {
 	LS='ls --color=auto'
 
 	if [[ ! -t 1 ]]; then
-		\ls $@
+		\ls "$@"
 		return 0
 	fi
 
-	args=''
-	mainfiles=''
-	hiddenfiles=''
+	args=()
+	mainfiles=()
+	hiddenfiles=()
 
 	# separate args into dash commands and actual files
-	for arg in $@; do
-		if echo $arg | egrep -q '^-'; then
-			args="$args $arg"
+	for arg in "$@"; do
+		if egrep -q '^-' <<< "$arg"; then
+			args+=("$arg")
 		else
 			# split files into hidden and non-hidden
-			if echo $arg | egrep -q '^\.'; then
-				[ -z "$hiddenfiles" ] && hiddenfiles="$arg" || hiddenfiles="$hiddenfiles $arg"
+			if egrep -q '^\.' <<< "$arg"; then
+				hiddenfiles+=("$arg")
 			else
-				[ -z "$mainfiles" ] && mainfiles="$arg" || mainfiles="$mainfiles $arg"
+				mainfiles+=("$arg")
 			fi
 		fi
 	done
 
-	files="$mainfiles"
-	if [[ -n "$files" && -n "$hiddenfiles" ]]; then
-		files="$files $hiddenfiles" 
-	elif [[ -n "$hiddenfiles" ]]; then
-		files="$hiddenfiles"
-	fi
-
+	files=( "${mainfiles[@]}" "${hiddenfiles[@]}" )
 	# if files are specified, list only those files
-	if [[ -n "$files" ]]; then
+	if [[ ${#files[@]} != 0 ]]; then
 		# if only one file is specified, act like normal, but just in that directory
-		if echo "$files" | egrep -q '^(\S+|".+")$'; then
-			pushd "$files" &> /dev/null
-			lsa $args
+		if [[ ${#files[@]} == 1 ]]; then
+			pushd "${files[0]}" &> /dev/null
+			lsa "${args[@]}"
 			popd &> /dev/null
 		else
-			if [ -n "$hiddenfiles" ]; then
+			if [[ ${#hiddenfiles[@]} != 0 ]]; then
 				echo '---  dotfiles  ---'
-				$LS -A $args $hiddenfiles
-				[ -n "$mainfiles" ] && echo -e '\n--- main files ---'
+				$LS -A "${args[@]}" "${hiddenfiles[@]}"
+				[[ ${#mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
 			fi
-			if [ -n "$mainfiles" ]; then
-				$LS -A $args $mainfiles
+			if [[ ${#mainfiles[@]} != 0 ]]; then
+				$LS -A "${args[@]}" "${mainfiles[@]}"
 			fi
 		fi
 	else
 		# no files specified, list and categorize files in current directory
-		hiddenfiles="$($LS -A | egrep '^\.([^\.]|.{2,})$')"
-		mainfiles="$($LS | egrep '^[^.]')"
-		if [ -n "$hiddenfiles" ]; then
+		hiddenfiles=( $( $LS -A | egrep '^\.([^\.]|.{2,})$' ) )
+		mainfiles=( $( $LS | egrep '^[^.]' ) )
+		if [[ ${#hiddenfiles[@]} != 0 ]]; then
 			echo '---  dotfiles  ---'
-			$LS -d $args $hiddenfiles
-			[ -n "$mainfiles" ] && echo -e '\n--- main files ---'
+			$LS -d "${args[@]}" "${hiddenfiles[@]}"
+			[[ ${mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
 		fi
-		if [ -n "$mainfiles" ]; then
-			$LS $args
+		if [[ ${#mainfiles[@]} != 0 ]]; then
+			$LS "${args[@]}"
 		fi
 	fi
 }
