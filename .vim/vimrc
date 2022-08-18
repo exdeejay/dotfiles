@@ -51,4 +51,6 @@ set viminfo='100,n$HOME/.vim/files/info/viminfo
 "<Leader> is backslash (\)
 nnoremap <Leader>s :source $MYVIMRC<CR>
 nnoremap <Leader>v :e $MYVIMRC<CR>
-
+vnoremap <Leader>y :OSCYank<CR>
+nnoremap <Leader>Y v$:OSCYank<CR>
+nnoremap <Leader>yy V:OSCYank<CR>

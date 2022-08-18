@@ -58,7 +58,7 @@ if [ "$OS_TYPE" = "msys" ]; then
 fi
 
 echo "Updating submodules..."
-git submodule update --init --recursive
+git submodule update --depth 1 --init --recursive
 
 echo "Existing dotfiles will be copied to $(basename $DOTFILES_DIR)/backup"
 echo "Installing dotfiles..."
