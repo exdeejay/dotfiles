@@ -142,6 +142,9 @@ record_command() {
 	[[ ! -d "$HOME/.casts" ]] && mkdir "$HOME/.casts"
 	if [[ ! -d "$HOME/.casts/$(date -I)" ]]; then
 		for dir in "$(find "$HOME/.casts" -mindepth 1 -maxdepth 1 ! -iname '*.tar.gz')"; do
+			for unzipped in "$dir"/*.cast; do
+				gzip "$unzipped"
+			done
 			tar -C "$(dirname "$dir")" -czf "$dir.tar.gz" "$(basename "$dir")"
 			rm -r "$dir"
 		done
