@@ -34,6 +34,8 @@ shopt -s autocd
 shopt -s extglob
 # Prevent shell redirection from overwriting files (use >| to override)
 set -o noclobber
+# Turn on vi keybinds
+set -o vi
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -128,6 +130,21 @@ lsa() {
 	fi
 }
 
+makereal() {
+	if [[ $# != 1 ]]; then
+		echo 'Usage: makereal <symlink>'
+		return 1
+	fi
+	if [[ ! -h "$1" ]]; then
+		echo "Error: $1 is not a symlink"
+		return 1
+	fi
+	REAL="$(readlink -f "$1")"
+	rm "$1"
+	cp -r "$REAL" "$1"
+	echo "$1"
+}
+
 [ -n "$(which bat)" ] && alias cat='bat'
 
 if [ -d "$HOME/.bash_include" ]; then
@@ -158,11 +175,10 @@ record_command() {
 attach() {
 	if [[ -z "$TMUX" && "$-" =~ i ]]; then
 		if [[ "$RECORD" == "yes" ]]; then
-			tmux has || tmux new-session -d
-			record_command tmux attach
+			record_command tmux new-session -t session-group
 			exit
 		else
-			tmux has && exec tmux attach || exec tmux
+			tmux new-session -t session-group
 		fi
 	fi
 }
