@@ -32,6 +32,14 @@ shopt -s globstar
 shopt -s autocd
 # Turn on extended glob patterns
 shopt -s extglob
+# Error when glob doesn't match any files
+shopt -s failglob
+# Match dotfiles when expanding globs
+shopt -s dotglob
+# Fix small spelling mistakes on cd
+shopt -s cdspell
+# Fix small spelling mistakes on tab completion
+shopt -s dirspell
 # Prevent shell redirection from overwriting files (use >| to override)
 set -o noclobber
 # Turn on vi keybinds
