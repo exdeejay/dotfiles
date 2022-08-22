@@ -1,0 +1,8 @@
+#!/bin/bash
+
+GIT_USER="$(git config --global user.name)"
+if [[ "$GIT_USER" != "exdeejay" ]]; then
+	echo "ERROR: git user.name is set to \"$GIT_USER\""
+	echo "Run \`switchgit\` and retry"
+	exit 1
+fi

@@ -127,5 +127,7 @@ if [ ! -d "$HOME/.bash_include" ]; then
 	mkdir "$HOME/.bash_include"
 fi
 
+git config --local core.hooksPath .githooks/
+
 echo "done"
 
