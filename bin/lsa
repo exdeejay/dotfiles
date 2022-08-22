@@ -1,0 +1,58 @@
+#!/bin/bash
+
+LS='ls --color=auto'
+
+if [[ ! -t 1 ]]; then
+	\ls "$@"
+	return 0
+fi
+
+args=()
+mainfiles=()
+hiddenfiles=()
+
+# separate args into dash commands and actual files
+for arg in "$@"; do
+	if egrep -q '^-' <<< "$arg"; then
+		args+=("$arg")
+	else
+		# split files into hidden and non-hidden
+		if egrep -q '^\.' <<< "$arg"; then
+			hiddenfiles+=("$arg")
+		else
+			mainfiles+=("$arg")
+		fi
+	fi
+done
+
+files=( "${mainfiles[@]}" "${hiddenfiles[@]}" )
+# if files are specified, list only those files
+if [[ ${#files[@]} != 0 ]]; then
+	# if only one file is specified, act like normal, but just in that directory
+	if [[ ${#files[@]} == 1 && -d "${files[0]}" ]]; then
+		pushd "${files[0]}" &> /dev/null
+		lsa "${args[@]}"
+		popd &> /dev/null
+	else
+		if [[ ${#hiddenfiles[@]} != 0 ]]; then
+			echo '---  dotfiles  ---'
+			$LS -A "${args[@]}" "${hiddenfiles[@]}"
+			[[ ${#mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
+		fi
+		if [[ ${#mainfiles[@]} != 0 ]]; then
+			$LS -A "${args[@]}" "${mainfiles[@]}"
+		fi
+	fi
+else
+	# no files specified, list and categorize files in current directory
+	hiddenfiles=( $( $LS -A | egrep '^\.([^\.]|.{2,})$' ) )
+	mainfiles=( $( $LS | egrep '^[^.]' ) )
+	if [[ ${#hiddenfiles[@]} != 0 ]]; then
+		echo '---  dotfiles  ---'
+		$LS -d "${args[@]}" "${hiddenfiles[@]}"
+		[[ ${mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
+	fi
+	if [[ ${#mainfiles[@]} != 0 ]]; then
+		$LS "${args[@]}"
+	fi
+fi

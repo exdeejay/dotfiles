@@ -78,85 +78,10 @@ alias la='ls -A'
 alias ls='lsa'
 alias l='ls'
 
-# More formatted `ls` command, specifically to separate dotfiles and regular files
-lsa() {
-	LS='ls --color=auto'
-
-	if [[ ! -t 1 ]]; then
-		\ls "$@"
-		return 0
-	fi
-
-	args=()
-	mainfiles=()
-	hiddenfiles=()
-
-	# separate args into dash commands and actual files
-	for arg in "$@"; do
-		if egrep -q '^-' <<< "$arg"; then
-			args+=("$arg")
-		else
-			# split files into hidden and non-hidden
-			if egrep -q '^\.' <<< "$arg"; then
-				hiddenfiles+=("$arg")
-			else
-				mainfiles+=("$arg")
-			fi
-		fi
-	done
-
-	files=( "${mainfiles[@]}" "${hiddenfiles[@]}" )
-	# if files are specified, list only those files
-	if [[ ${#files[@]} != 0 ]]; then
-		# if only one file is specified, act like normal, but just in that directory
-		if [[ ${#files[@]} == 1 && -d "${files[0]}" ]]; then
-			pushd "${files[0]}" &> /dev/null
-			lsa "${args[@]}"
-			popd &> /dev/null
-		else
-			if [[ ${#hiddenfiles[@]} != 0 ]]; then
-				echo '---  dotfiles  ---'
-				$LS -A "${args[@]}" "${hiddenfiles[@]}"
-				[[ ${#mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
-			fi
-			if [[ ${#mainfiles[@]} != 0 ]]; then
-				$LS -A "${args[@]}" "${mainfiles[@]}"
-			fi
-		fi
-	else
-		# no files specified, list and categorize files in current directory
-		hiddenfiles=( $( $LS -A | egrep '^\.([^\.]|.{2,})$' ) )
-		mainfiles=( $( $LS | egrep '^[^.]' ) )
-		if [[ ${#hiddenfiles[@]} != 0 ]]; then
-			echo '---  dotfiles  ---'
-			$LS -d "${args[@]}" "${hiddenfiles[@]}"
-			[[ ${mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
-		fi
-		if [[ ${#mainfiles[@]} != 0 ]]; then
-			$LS "${args[@]}"
-		fi
-	fi
-}
-
-makereal() {
-	if [[ $# != 1 ]]; then
-		echo 'Usage: makereal <symlink>'
-		return 1
-	fi
-	if [[ ! -h "$1" ]]; then
-		echo "Error: $1 is not a symlink"
-		return 1
-	fi
-	REAL="$(readlink -f "$1")"
-	rm "$1"
-	cp -r "$REAL" "$1"
-	echo "$1"
-}
-
 [ -n "$(which bat)" ] && alias cat='bat'
 
 if [ -d "$HOME/.bash_include" ]; then
-	for f in $(find "$HOME/.bash_include" -type f); do
+	for f in $(find "$HOME/.bash_include" -maxdepth 1 -type f); do
 		source "$f"
 	done
 fi
@@ -167,9 +92,7 @@ record_command() {
 	[[ ! -d "$HOME/.casts" ]] && mkdir "$HOME/.casts"
 	if [[ ! -d "$HOME/.casts/$(date -I)" ]]; then
 		for dir in "$(find "$HOME/.casts" -mindepth 1 -maxdepth 1 ! -iname '*.tar.gz')"; do
-			for unzipped in "$dir"/*.cast; do
-				gzip "$unzipped"
-			done
+			# TODO: zip up previously unzipped casts before tarring
 			tar -C "$(dirname "$dir")" -czf "$dir.tar.gz" "$(basename "$dir")"
 			rm -r "$dir"
 		done
