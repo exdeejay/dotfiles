@@ -1,8 +1,9 @@
 # If not running interactively, don't do anything
 [[ $- =~ i ]] || return
 
-DOTFILES_DIR="$(dirname "$(realpath ".bashrc")")"
-[[ -z "$RECORD" ]] && RECORD="no"
+# Since this script isn't guaranteed to be in $PWD, get accurate DOTFILES_DIR
+export DOTFILES_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+[[ -z "$RECORD" ]] && RECORD="yes"
 
 source "$DOTFILES_DIR/bash_include/path.sh"
 source "$DOTFILES_DIR/bash_include/aliases.sh"

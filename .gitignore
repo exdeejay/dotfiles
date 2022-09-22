@@ -4,3 +4,4 @@ backup
 .vim/files/info/viminfo
 .vim/files/undo/*
 .vim/files/swap/*
+**/*.pyc
