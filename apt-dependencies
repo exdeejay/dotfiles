@@ -2,4 +2,5 @@ git
 tmux
 vim
 python3
+python3-pip
 curl
