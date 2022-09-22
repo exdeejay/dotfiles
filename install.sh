@@ -64,22 +64,28 @@ fi
 echo "Updating submodules..."
 git submodule update --depth 1 --init --recursive
 
+
+# Create backup folders
+if [[ ! -d "$DOTFILES_DIR/backup" ]]; then
+	echo "Creating $(basename "$DOTFILES_DIR")/backup..."
+	mkdir "$DOTFILES_DIR/backup"
+fi
+
 echo "Existing dotfiles will be copied to $(basename $DOTFILES_DIR)/backup"
 echo "Installing dotfiles..."
 
-# Create backup folders
-[ ! -d "$DOTFILES_DIR/backup" ] && mkdir "$DOTFILES_DIR/backup"
-[ ! -d "$DOTFILES_DIR/backup/bin" ] && mkdir "$DOTFILES_DIR/backup/bin"
-
 # Copy all relevant dotfiles to the home directory
-ignored_files=".git .gitconfig .githooks .gitignore .gitmodules apt-dependencies bin backup TODO.md install.sh uninstall.sh"
+ignored_files=".git .gitconfig .githooks .gitignore .gitmodules apt-dependencies gdb-printers bin backup TODO.md install.sh uninstall.sh"
 for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
 	if grep -q "$(basename "$file")" <<< "$ignored_files"; then
 		continue
 	fi
 	case "$(basename "$file")" in
-		.gitconfig.inc)
-			copyWithBackup "$file" "$HOME/.gitconfig" copy
+		*.inc)
+			base_file="$(basename "${file::-4}")"
+			if [[ ! -e "$HOME/$base_file" || $(readYN "Overwrite ~/$base_file?" 'n') == 'y' ]]; then
+				copyWithBackup "$file" "$HOME/$base_file" copy
+			fi
 			;;
 		*)
 			copyWithBackup "$file" "$HOME/$(basename "$file")" backup
@@ -88,50 +94,61 @@ for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
 done
 
 # Install apt dependencies
-if [[ -n "$(which apt)" && $(readYN "install apt dependencies?" 'n') == 'y' ]]; then
+if [[ -n "$(which apt)" && $(readYN "Install apt dependencies?" 'n') == 'y' ]]; then
+	echo "Installing apt dependencies..."
 	packagelist="$DOTFILES_DIR/apt-dependencies"
 	sudo apt-get update
 	# sourced from https://askubuntu.com/questions/252734/apt-get-mass-install-packages-from-a-file
 	xargs -a <(awk '! /^ *(#|$)/' "$packagelist") -r -- sudo apt-get install -y
+	echo
 fi
 # Install pwndbg
-if [[ ! -d "$HOME/.pwndbg" && $(readYN "install pwndbg?" 'y') == 'y' ]]; then
+if [[ ! -d "$HOME/.pwndbg" && $(readYN "Install pwndbg?" 'y') == 'y' ]]; then
+	echo "Installing pwndbg to ~/.pwndbg..."
 	git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg
-	pushd $HOME/.pwndbg
+	pushd $HOME/.pwndbg &> /dev/null
 	./setup.sh
-	popd
+	popd &> /dev/null
 	sed -i '$d' "$HOME/.gdbinit"
+	echo
 fi
 # Install gdb-gef
-if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "install gdb-gef?" 'y') == 'y' ]]; then
+if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "Install gdb-gef?" 'y') == 'y' ]]; then
+	echo "Installing GEF to ~/.gdbinit-gef.py..."
 	curl https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
+	echo
 fi
 # Install asciinema
-if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "install asciinema?" 'y') == 'y' ]]; then
+if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "Install asciinema?" 'y') == 'y' ]]; then
+	echo "Installing asciinema..."
 	python3 -m pip install --user asciinema
+	echo
 fi
 
 # Optionally set custom git user info
-if [[ $(readYN "set git username and email?" 'n') == 'y' ]]; then
-	printf "Username: "
-	read -e git_username
-	printf "Email: "
-	read -e git_email
-	git config --global user.name "$git_username"
+if [[ "$(git config --global user.name)" == "exdeejay" && $(readYN "Set git name and email?" 'n') == 'y' ]]; then
+	read -ep "Name: " git_name
+	read -ep "Email: " git_email
+	git config --global user.name "$git_name"
 	git config --global user.email "$git_email"
-	unset git_username
+	unset git_name
 	unset git_email
-else
-	git config --global user.name "exdeejay"
-	git config --global user.email "13634296+exdeejay@users.noreply.github.com"
+	echo
 fi
 
 # Create local bash folder for scripts to be included in .bashrc
 if [ ! -d "$HOME/.bash_include" ]; then
+	echo "Creating ~/.bash_include..."
 	mkdir "$HOME/.bash_include"
 fi
 
-git config --local core.hooksPath .githooks/
+if [[ "$(git config --local core.hooksPath)" != ".githooks/" ]]; then
+	echo "Setting up .githooks/..."
+	pushd "$DOTFILES_DIR" &> /dev/null
+	git config --local core.hooksPath .githooks/
+	popd &> /dev/null
+	echo
+fi
 
 echo "done"
 
