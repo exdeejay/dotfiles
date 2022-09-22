@@ -1,13 +1,7 @@
 #!/bin/bash
 
 # Since this script isn't guaranteed to be in $PWD, get accurate DOTFILES_DIR
-SOURCE=${BASH_SOURCE[0]}
-while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-	DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
-	SOURCE=$(readlink "$SOURCE")
-	[[ $SOURCE != /* ]] && SOURCE=$DIR/$SOURCE # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-done
-DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
+DOTFILES_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # Remove all symbolic links in a directory pointing to anywhere in DOTFILES_DIR
 # Usage: removeLinks <targetdir>
