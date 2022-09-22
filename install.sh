@@ -10,19 +10,23 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
-
 # Prompt for a Y/N answer
-# Usage: readYN <question> [default answer y/n]
+# Usage: readYN <question> [default answer]
 # Returns: 'y' or 'n' depending on user input
 readYN() {
-	selection="notset"
-	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
-		printf "$1 " >&2
-		[ "${2,,}" == "y" ] && printf "[Yn]" >&2 || printf "[yN]" >&2
-		printf ": " >&2
-		read -e selection
+	if [[ "${2,,}" == "y" ]]; then
+		choices="Yn"
+	elif [[ "${2,,}" == "n" ]]; then
+		choices="yN"
+	else
+		choices="yn"
+	fi
+	while true; do
+		read -ep "$1 [$choices]: " selection
+		[[ "${selection,,}" == "y" || "${selection,,}" == "n" ]] && break
+		[[ -z "$selection" ]] && [[ "${2,,}" == "y" || "${2,,}" == "n" ]] && break
 	done
-	[ "$selection" != "" ] && echo "${selection,,}" || echo "${2,,}"
+	[[ -n "$selection" ]] && echo "${selection,,}" || echo "${2,,}"
 }
 
 # Backup and overwrite file with symlink

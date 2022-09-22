@@ -1,17 +1,22 @@
 #!/bin/bash
 
 # Prompt for a Y/N answer
-# Usage: readYN <question> [default answer y/n]
+# Usage: readYN <question> [default answer]
 # Returns: 'y' or 'n' depending on user input
 readYN() {
-	selection="notset"
-	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
-		printf "$1 " >&2
-		[ "${2,,}" == "y" ] && printf "[Yn]" >&2 || printf "[yN]" >&2
-		printf ": " >&2
-		read -e selection
+	if [[ "${2,,}" == "y" ]]; then
+		choices="Yn"
+	elif [[ "${2,,}" == "n" ]]; then
+		choices="yN"
+	else
+		choices="yn"
+	fi
+	while true; do
+		read -ep "$1 [$choices]: " selection
+		[[ "${selection,,}" == "y" || "${selection,,}" == "n" ]] && break
+		[[ -z "$selection" ]] && [[ "${2,,}" == "y" || "${2,,}" == "n" ]] && break
 	done
-	[ "$selection" != "" ] && echo "${selection,,}" || echo "${2,,}"
+	[[ -n "$selection" ]] && echo "${selection,,}" || echo "${2,,}"
 }
 
 GIT_USER="$(git config --global user.name)"
@@ -22,6 +27,7 @@ while [[ "$GIT_USER" != "exdeejay" ]]; do
 	echo "(If you're not exdeejay, run \`rm .githooks/pre-commit\` to make this message go away)"
 	if [[ $(readYN "Run \`switchgit\`?" 'y') == 'y' ]]; then
 		switchgit
+		echo
 		GIT_USER="$(git config --global user.name)"
 	else
 		exit 1
