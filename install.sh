@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Since this script isn't guaranteed to be in $PWD, get accurate DOTFILES_DIR
 SOURCE=${BASH_SOURCE[0]}
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -10,24 +9,8 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
-# Prompt for a Y/N answer
-# Usage: readYN <question> [default answer]
-# Returns: 'y' or 'n' depending on user input
-readYN() {
-	if [[ "${2,,}" == "y" ]]; then
-		choices="Yn"
-	elif [[ "${2,,}" == "n" ]]; then
-		choices="yN"
-	else
-		choices="yn"
-	fi
-	while true; do
-		read -ep "$1 [$choices]: " selection
-		[[ "${selection,,}" == "y" || "${selection,,}" == "n" ]] && break
-		[[ -z "$selection" ]] && [[ "${2,,}" == "y" || "${2,,}" == "n" ]] && break
-	done
-	[[ -n "$selection" ]] && echo "${selection,,}" || echo "${2,,}"
-}
+# ensure readYN is on path
+export PATH="$DOTFILES_DIR/bin:$PATH"
 
 # Backup and overwrite file with symlink
 # Usage: copyWithBackup <sourcefile> <destfile> ["backup"/"copy"]

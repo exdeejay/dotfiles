@@ -1,6 +1,23 @@
 #!/bin/bash
 
 GIT_USER="$(git config --global user.name)"
+GIT_EMAIL="$(git config --global user.email)"
+
+echo << !
+--- current git config ---
+   user: "$GIT_USER"
+  email: "$GIT_EMAIL"
+--------------------------
+!
+
+if readYN "Is this the user you want to restrict this repository to?" 'y'; then
+elif readYN "Run switchgit?" 'y'; then
+	switchgit
+fi
+
+
+
+GIT_USER="$(git config --global user.name)"
 while [[ "$GIT_USER" != "exdeejay" ]]; do
 	# get stdin from keyboard
 	exec < /dev/tty
@@ -15,3 +32,4 @@ while [[ "$GIT_USER" != "exdeejay" ]]; do
 		exit 1
 	fi
 done
+

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Prompt for a Y/N answer
+# Usage: readYN <question> [default answer]
+# Returns: 'y' or 'n' depending on user input
+
+if [[ $# < 1 ]]; then
+	echo "Usage: $0 <question> [default answer]"
+	exit -1
+fi
+
+if [[ "${2,,}" == "y" ]]; then
+	choices="Yn"
+elif [[ "${2,,}" == "n" ]]; then
+	choices="yN"
+else
+	choices="yn"
+fi
+
+while true; do
+	read -ep "$1 [$choices]: " selection
+	[[ "${selection,,}" == "y" || "${selection,,}" == "n" ]] && break
+	[[ -z "$selection" ]] && [[ "${2,,}" == "y" || "${2,,}" == "n" ]] && break
+done
+
+if [[ -n "$selection" ]]; then
+	ANSWER="${selection,,}" 
+else
+	ANSWER="${2,,}"
+fi
+
+echo "$ANSWER"
+[[ "$ANSWER" == "y" ]] && exit 0 || exit 1
+
