@@ -10,7 +10,7 @@ done
 DOTFILES_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
 # ensure readYN is on path
-export PATH="$DOTFILES_DIR/bin:$PATH"
+export PATH="$DOTFILES_DIR/scripts:$PATH"
 
 # Backup and overwrite file with symlink
 # Usage: copyWithBackup <sourcefile> <destfile> ["backup"/"copy"]
@@ -77,16 +77,18 @@ for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
 done
 
 # Install apt dependencies
-if [[ -n "$(which apt)" && $(readYN "Install apt dependencies?" 'n') == 'y' ]]; then
-	echo "Installing apt dependencies..."
+[[ -n "$(which apt 2>/dev/null)" ]] && installer=apt
+[[ -n "$(which dnf 2>/dev/null)" ]] && installer=dnf
+if [[ -n "$installer" && $(readYN "Install $installer dependencies?" 'n') == 'y' ]]; then
+	echo "Installing dependencies..."
 	packagelist="$DOTFILES_DIR/apt-dependencies"
-	sudo apt-get update
+	sudo $installer update
 	# sourced from https://askubuntu.com/questions/252734/apt-get-mass-install-packages-from-a-file
-	xargs -a <(awk '! /^ *(#|$)/' "$packagelist") -r -- sudo apt-get install -y
+	xargs -a <(awk '! /^ *(#|$)/' "$packagelist") -r -- sudo $installer install -y
 	echo
 fi
 # Install pwndbg
-if [[ ! -d "$HOME/.pwndbg" && $(readYN "Install pwndbg?" 'y') == 'y' ]]; then
+if [[ ! -d "$HOME/.pwndbg" && $(readYN "Install pwndbg?" 'n') == 'y' ]]; then
 	echo "Installing pwndbg to ~/.pwndbg..."
 	git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg
 	pushd $HOME/.pwndbg &> /dev/null
@@ -96,17 +98,20 @@ if [[ ! -d "$HOME/.pwndbg" && $(readYN "Install pwndbg?" 'y') == 'y' ]]; then
 	echo
 fi
 # Install gdb-gef
-if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "Install gdb-gef?" 'y') == 'y' ]]; then
+if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "Install gdb-gef?" 'n') == 'y' ]]; then
 	echo "Installing GEF to ~/.gdbinit-gef.py..."
 	[[ -z "$(which curl)" ]] && sudo apt install -y curl
 	curl -L https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
 	echo
 fi
 # Install asciinema
-if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "Install asciinema?" 'y') == 'y' ]]; then
+if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "Install asciinema?" 'n') == 'y' ]]; then
 	echo "Installing asciinema..."
 	[[ -z "$(which python3)" ]] && sudo apt install -y python3
 	python3 -m pip install --user asciinema
+	if [[ $(readYN "enable recording? (DOES NOTHING RN)" 'y') == 'y' ]]; then
+		#todo
+	fi
 	echo
 fi
 

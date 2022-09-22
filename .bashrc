@@ -2,7 +2,7 @@
 [[ $- =~ i ]] || return
 
 DOTFILES_DIR="$(dirname "$(realpath ".bashrc")")"
-[[ -z "$RECORD" ]] && RECORD="yes"
+[[ -z "$RECORD" ]] && RECORD="no"
 
 source "$DOTFILES_DIR/bash_include/path.sh"
 source "$DOTFILES_DIR/bash_include/aliases.sh"
