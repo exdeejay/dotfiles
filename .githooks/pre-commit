@@ -25,6 +25,7 @@ while [[ "$GIT_USER" != "exdeejay" ]]; do
 	exec < /dev/tty
 	echo "ERROR: git user.name is set to \"$GIT_USER\""
 	echo "(If you're not exdeejay, run \`rm .githooks/pre-commit\` to make this message go away)"
+	echo
 	if [[ $(readYN "Run \`switchgit\`?" 'y') == 'y' ]]; then
 		switchgit
 		echo
