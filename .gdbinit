@@ -18,5 +18,6 @@ end
 
 define init-pwndbg
 	source /home/user/.pwndbg/gdbinit.py
+	set follow-fork-mode parent
 end
 

@@ -72,7 +72,7 @@ echo "Installing dotfiles..."
 [ ! -d "$DOTFILES_DIR/backup/bin" ] && mkdir "$DOTFILES_DIR/backup/bin"
 
 # Copy all relevant dotfiles to the home directory
-ignored_files=".git .gitconfig .gitignore .gitmodules apt-dependencies bin backup TODO.md install.sh uninstall.sh"
+ignored_files=".git .gitconfig .githooks .gitignore .gitmodules apt-dependencies bin backup TODO.md install.sh uninstall.sh"
 for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
 	if grep -q "$(basename "$file")" <<< "$ignored_files"; then
 		continue
