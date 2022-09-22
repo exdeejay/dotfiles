@@ -58,7 +58,7 @@ echo "Existing dotfiles will be copied to $(basename $DOTFILES_DIR)/backup"
 echo "Installing dotfiles..."
 
 # Copy all relevant dotfiles to the home directory
-ignored_files=".git .gitconfig .githooks .gitignore .gitmodules apt-dependencies gdb-printers bin backup TODO.md install.sh uninstall.sh"
+ignored_files=".git .gitconfig .githooks .gitignore .gitmodules apt-dependencies gdb-printers bin scripts backup TODO.md install.sh uninstall.sh bash_include"
 for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
 	if grep -q "$(basename "$file")" <<< "$ignored_files"; then
 		continue
