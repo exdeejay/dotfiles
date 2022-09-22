@@ -115,12 +115,14 @@ fi
 # Install gdb-gef
 if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "Install gdb-gef?" 'y') == 'y' ]]; then
 	echo "Installing GEF to ~/.gdbinit-gef.py..."
-	curl https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
+	[[ -z "$(which curl)" ]] && sudo apt install -y curl
+	curl -L https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
 	echo
 fi
 # Install asciinema
 if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "Install asciinema?" 'y') == 'y' ]]; then
 	echo "Installing asciinema..."
+	[[ -z "$(which python3)" ]] && sudo apt install -y python3
 	python3 -m pip install --user asciinema
 	echo
 fi
