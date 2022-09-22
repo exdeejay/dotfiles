@@ -78,6 +78,7 @@ alias la='ls -A'
 alias ls='lsa'
 alias l='ls'
 
+[ -n "$(which gdb-pwndbg)" ] && alias gdb='gdb-pwndbg'
 [ -n "$(which bat)" ] && alias cat='bat'
 
 if [ -d "$HOME/.bash_include" ]; then
