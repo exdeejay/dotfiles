@@ -1,9 +1,29 @@
 #!/bin/bash
 
+# Prompt for a Y/N answer
+# Usage: readYN <question> [default answer y/n]
+# Returns: 'y' or 'n' depending on user input
+readYN() {
+	selection="notset"
+	while [ "${selection,,}" != "y" -a "${selection,,}" != "n" -a "$selection" != "" ]; do
+		printf "$1 " >&2
+		[ "${2,,}" == "y" ] && printf "[Yn]" >&2 || printf "[yN]" >&2
+		printf ": " >&2
+		read -e selection
+	done
+	[ "$selection" != "" ] && echo "${selection,,}" || echo "${2,,}"
+}
+
 GIT_USER="$(git config --global user.name)"
-if [[ "$GIT_USER" != "exdeejay" ]]; then
+while [[ "$GIT_USER" != "exdeejay" ]]; do
+	# get stdin from keyboard
+	exec < /dev/tty
 	echo "ERROR: git user.name is set to \"$GIT_USER\""
-	echo "Run \`switchgit\` and retry"
-	echo "(If you're not DJ, run \`rm .githooks/pre-commit\` to make this message go away)"
-	exit 1
-fi
+	echo "(If you're not exdeejay, run \`rm .githooks/pre-commit\` to make this message go away)"
+	if [[ $(readYN "Run \`switchgit\`?" 'y') == 'y' ]]; then
+		switchgit
+		GIT_USER="$(git config --global user.name)"
+	else
+		exit 1
+	fi
+done
