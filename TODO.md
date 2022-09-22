@@ -1,4 +1,4 @@
 ## TODO:
 - randomize color on install
 - install.sh or casts makes ~/.tar.gz, fix that
-- finish hookcommit
+- tar/unzip command that makes directory if more than one file is output
