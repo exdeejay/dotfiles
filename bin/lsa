@@ -4,7 +4,7 @@ LS='ls --color=auto'
 
 if [[ ! -t 1 ]]; then
 	\ls "$@"
-	return 0
+	exit 0
 fi
 
 args=()
@@ -50,7 +50,7 @@ else
 	if [[ ${#hiddenfiles[@]} != 0 ]]; then
 		echo '---  dotfiles  ---'
 		$LS -d "${args[@]}" "${hiddenfiles[@]}"
-		[[ ${mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
+		[[ ${#mainfiles[@]} != 0 ]] && echo -e '\n--- main files ---'
 	fi
 	if [[ ${#mainfiles[@]} != 0 ]]; then
 		$LS "${args[@]}"
