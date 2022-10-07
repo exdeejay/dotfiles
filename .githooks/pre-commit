@@ -3,10 +3,9 @@
 GIT_USER="$(git config --global user.name)"
 while [[ "$GIT_USER" != "exdeejay" ]]; do
 	# get stdin from keyboard
-	exec < /dev/tty
-	echo "ERROR: git user.name is set to \"$GIT_USER\""
-	echo "(If you're not exdeejay, run \`rm .githooks/pre-commit\` to make this message go away)"
-	echo
+	#exec < /dev/tty
+	1>&2 echo "ERROR: git user.name is set to \"$GIT_USER\""
+	1>&2 echo "(If you're not exdeejay, run \`rm .githooks/pre-commit\` to make this message go away)"
 	#if readYN "Run \`switchgit\`?" 'y'; then
 	#	switchgit
 	#	echo
