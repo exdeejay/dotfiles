@@ -5,7 +5,7 @@
 # Returns: 'y' or 'n' depending on user input
 
 if [[ $# < 1 ]]; then
-	echo "Usage: $0 <question> [default answer]"
+	echo "Usage: $(basename "$0") <question> [default answer]"
 	exit -1
 fi
 
