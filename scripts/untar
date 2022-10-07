@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [[ ! -e "$1" ]]; then
+	1>&2 echo "\"$1\" does not exist"
+	exit 1
+fi
+
+files="$(tar tf "$1")"
+if [[ $(wc -l <<< "$files") == 1 ]]; then
+	tar xvf "$1"
+	exit 0
+fi
+
+dir=$(head -1 <<< "$files" | sed -r 's%^([^/]+/)?.*$%\1%g')
+if [[ -z "$dir" ]]; then
+	tar xf "$1" --one-top-level
+	exit 0
+fi
+
+if [[ $(egrep -v "^$dir" <<< "$files" | wc -l) != 0 ]]; then
+	tar xf "$1" --one-top-level
+else
+	echo "$dir"
+	tar xf "$1"
+fi
