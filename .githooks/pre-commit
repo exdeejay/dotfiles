@@ -7,11 +7,11 @@ while [[ "$GIT_USER" != "exdeejay" ]]; do
 	echo "ERROR: git user.name is set to \"$GIT_USER\""
 	echo "(If you're not exdeejay, run \`rm .githooks/pre-commit\` to make this message go away)"
 	echo
-	if readYN "Run \`switchgit\`?" 'y'; then
-		switchgit
-		echo
-		GIT_USER="$(git config --global user.name)"
-	else
-		exit 1
-	fi
+	#if readYN "Run \`switchgit\`?" 'y'; then
+	#	switchgit
+	#	echo
+	#	GIT_USER="$(git config --global user.name)"
+	#else
+	exit 1
+	#fi
 done
