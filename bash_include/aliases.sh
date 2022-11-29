@@ -14,7 +14,7 @@ alias la='ls -A'
 alias ls='lsa'
 alias l='ls'
 
-[ -n "$(which gdb-pwndbg)" ] && alias gdb='gdb-pwndbg'
+[ -x "$HOME/.pwndbg" ] && alias gdb='gdb-pwndbg'
 [ -n "$(which bat)" ] && alias cat='bat'
 
 
