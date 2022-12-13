@@ -1,0 +1,2 @@
+[[ -z "$(which nvm)" ]]
+exit $?

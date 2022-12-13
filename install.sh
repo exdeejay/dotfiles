@@ -39,7 +39,7 @@ if [ "$OS_TYPE" = "msys" ]; then
 fi
 
 echo "Updating submodules..."
-git submodule update --depth 1 --init --recursive
+git -C "$DOTFILES_DIR" submodule update --depth 1 --init --recursive
 
 
 # Create backup folders
@@ -52,9 +52,8 @@ echo "Existing dotfiles will be copied to $(basename $DOTFILES_DIR)/backup"
 echo "Installing dotfiles..."
 
 # Copy all relevant dotfiles to the home directory
-ignored_files=".git .gitconfig .githooks .gitignore .gitmodules apt-dependencies gdb-printers bin scripts backup TODO.md install.sh uninstall.sh bash_include"
-for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
-	if grep -q "$(basename "$file")" <<< "$ignored_files"; then
+for file in $(find "$DOTFILES_DIR" -maxdepth 1 -name '.*' ! -wholename "$DOTFILES_DIR"); do
+	if grep -q .git <<< "$(basename "$file")"; then
 		continue
 	fi
 	case "$(basename "$file")" in
@@ -70,47 +69,35 @@ for file in $(find "$DOTFILES_DIR" -maxdepth 1 ! -wholename "$DOTFILES_DIR"); do
 	esac
 done
 
-# Install apt dependencies
 [[ -n "$(which apt 2>/dev/null)" ]] && installer=apt
 [[ -n "$(which dnf 2>/dev/null)" ]] && installer=dnf
-if [[ -n "$installer" && $(readYN "Install $installer dependencies?" 'n') == 'y' ]]; then
+if [[ -n "$installer" && $(readYN "Install $installer dependencies?") == 'y' ]]; then
 	echo "Installing dependencies..."
 	packagelist="$DOTFILES_DIR/apt-dependencies"
-	sudo $installer update
+	if [[ "$installer" == "apt" ]]; then
+		sudo $installer update
+	fi
 	# sourced from https://askubuntu.com/questions/252734/apt-get-mass-install-packages-from-a-file
 	xargs -a <(awk '! /^ *(#|$)/' "$packagelist") -r -- sudo $installer install -y
 	echo
 fi
-# Install pwndbg
-if [[ ! -d "$HOME/.pwndbg" && $(readYN "Install pwndbg?" 'n') == 'y' ]]; then
-	echo "Installing pwndbg to ~/.pwndbg..."
-	git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg
-	pushd $HOME/.pwndbg &> /dev/null
-	./setup.sh
-	popd &> /dev/null
-	sed -i '$d' "$HOME/.gdbinit"
-	echo
-fi
-# Install gdb-gef
-if [[ ! -f "$HOME/.gdbinit-gef.py" && $(readYN "Install gdb-gef?" 'n') == 'y' ]]; then
-	echo "Installing GEF to ~/.gdbinit-gef.py..."
-	[[ -z "$(which curl)" ]] && sudo apt install -y curl
-	curl -L https://gef.blah.cat/py > "$HOME/.gdbinit-gef.py"
-	echo
-fi
-# Install asciinema
-if [[ -n "$(which python3)" && -z "$(which asciinema)" && $(readYN "Install asciinema?" 'n') == 'y' ]]; then
-	echo "Installing asciinema..."
-	[[ -z "$(which python3)" ]] && sudo apt install -y python3
-	python3 -m pip install --user asciinema
-	if [[ $(readYN "enable recording? (DOES NOTHING RN)" 'y') == 'y' ]]; then
-		#todo
+
+for module in "$DOTFILES_DIR/installmodules"/*; do
+	module_name="$(basename "$module")"
+	bash "$module"/check.sh > /dev/null
+	if [[ $? != 0 && $(readYN "Install $module_name?" 'n') == 'y' ]]; then
+		echo "Installing $module_name..."
+		bash "$module"/install.sh
+		if [[ $? != 0 ]]; then
+			echo "$module_name install failed! continuing..."
+		fi
+		echo
 	fi
-	echo
-fi
+done
+
 
 # Optionally set custom git user info
-if [[ "$(git config --global user.name)" == "exdeejay" && $(readYN "Set git name and email?" 'n') == 'y' ]]; then
+if [[ "$(git config --global user.name)" == "exdeejay" && $(readYN "Change git name and email from the default?" 'n') == 'y' ]]; then
 	read -ep "Name: " git_name
 	read -ep "Email: " git_email
 	git config --global user.name "$git_name"
@@ -126,13 +113,9 @@ if [ ! -d "$HOME/.bash_include" ]; then
 	mkdir "$HOME/.bash_include"
 fi
 
-if [[ "$(git config --local core.hooksPath)" != ".githooks/" ]]; then
+if [[ "$(git -C "$DOTFILES_DIR" config --local core.hooksPath)" != ".githooks/" ]]; then
 	echo "Setting up .githooks/..."
-	pushd "$DOTFILES_DIR" &> /dev/null
-	git config --local core.hooksPath .githooks/
-	popd &> /dev/null
-	echo
+	git -C "$DOTFILES_DIR" config --local core.hooksPath .githooks/
 fi
 
 echo "done"
-

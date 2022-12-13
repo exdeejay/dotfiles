@@ -1,0 +1,2 @@
+[[ -d "$HOME/.pwndbg" ]]
+exit $?
