@@ -1,3 +1,5 @@
+#/bin/bash
+
 echo "Installing pwndbg to ~/.pwndbg..."
 git clone https://github.com/pwndbg/pwndbg $HOME/.pwndbg
 pushd $HOME/.pwndbg &> /dev/null
