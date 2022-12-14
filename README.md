@@ -1,6 +1,6 @@
 # .dot.files
 
-these are my dotfiles, optimized for getting up and running on anew machine quickly. not totally complete yet, but there's some banger scripts in here.
+these are my dotfiles, optimized for getting up and running on a new machine quickly. not totally complete yet, but there's some banger scripts in here.
 
 
 ## install
