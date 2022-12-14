@@ -13,11 +13,11 @@ hiddenfiles=()
 
 # separate args into dash commands and actual files
 for arg in "$@"; do
-	if egrep -q '^-' <<< "$arg"; then
+	if grep -E -q '^-' <<< "$arg"; then
 		args+=("$arg")
 	else
 		# split files into hidden and non-hidden
-		if egrep -q '^\.' <<< "$arg"; then
+		if grep -E -q '^\.' <<< "$arg"; then
 			hiddenfiles+=("$arg")
 		else
 			mainfiles+=("$arg")
@@ -45,8 +45,8 @@ if [[ ${#files[@]} != 0 ]]; then
 	fi
 else
 	# no files specified, list and categorize files in current directory
-	hiddenfiles=( $( $LS -A | egrep '^\.([^\.]|.{2,})$' ) )
-	mainfiles=( $( $LS | egrep '^[^.]' ) )
+	hiddenfiles=( $( $LS -A | grep -E '^\.([^\.]|.{2,})$' ) )
+	mainfiles=( $( $LS | grep -E '^[^.]' ) )
 	if [[ ${#hiddenfiles[@]} != 0 ]]; then
 		echo '---  dotfiles  ---'
 		$LS -d "${args[@]}" "${hiddenfiles[@]}"

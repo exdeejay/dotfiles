@@ -22,7 +22,7 @@ if [[ -z "$dir" ]]; then
 	exit 0
 fi
 
-if [[ $(egrep -v "^$dir" <<< "$files" | wc -l) != 0 ]]; then
+if [[ $(grep -E -v "^$dir" <<< "$files" | wc -l) != 0 ]]; then
 	tar xf "$1" --one-top-level
 else
 	echo "$dir"

@@ -54,7 +54,9 @@ echo "Installing dotfiles..."
 # Copy all relevant dotfiles to the home directory
 for file in $(find "$DOTFILES_DIR" -maxdepth 1 -name '.*' ! -wholename "$DOTFILES_DIR"); do
 	if grep -q .git <<< "$(basename "$file")"; then
-		continue
+		if grep -q -v .gitconfig.inc <<< "$(basename "$file")"; then
+			continue
+		fi
 	fi
 	case "$(basename "$file")" in
 		*.inc)
