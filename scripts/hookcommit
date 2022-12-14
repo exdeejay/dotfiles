@@ -1,9 +1,9 @@
 #!/bin/bash
 
-GIT_USER="$(git config --global user.name)"
-GIT_EMAIL="$(git config --global user.email)"
+GIT_USER="$(git config user.name)"
+GIT_EMAIL="$(git config user.email)"
 
-echo << !
+cat << !
 --- current git config ---
    user: "$GIT_USER"
   email: "$GIT_EMAIL"
@@ -17,7 +17,7 @@ fi
 
 
 
-GIT_USER="$(git config --global user.name)"
+GIT_USER="$(git config user.name)"
 while [[ "$GIT_USER" != "exdeejay" ]]; do
 	# get stdin from keyboard
 	exec < /dev/tty
@@ -27,7 +27,7 @@ while [[ "$GIT_USER" != "exdeejay" ]]; do
 	if readYN "Run \`switchgit\`?" 'y'; then
 		switchgit
 		echo
-		GIT_USER="$(git config --global user.name)"
+		GIT_USER="$(git config user.name)"
 	else
 		exit 1
 	fi

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+GIT_USER="$(git config user.name)"
+GIT_EMAIL="$(git config user.email)"
+
+cat << !
+--- current git config ---
+   user: "$GIT_USER"
+  email: "$GIT_EMAIL"
+--------------------------
+!
+
+if [[ "$(readYN "Is this the user you want to rewrite this repository to?" 'n')" == 'n' ]]; then
+	echo "cancelling..."
+	exit
+fi
+
+echo
+echo "Resetting all commits in 3 seconds..."
+sleep 3
+git rebase --root --exec '
+	GIT_COMMITTER_DATE="$(git log -n 1 --format=%aD)"
+	git commit --amend --reset-author --no-edit --date="$(git log -n 1 --format=%aD)"
+'
