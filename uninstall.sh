@@ -2,6 +2,11 @@
 
 # Since this script isn't guaranteed to be in $PWD, get accurate ROOT_DIR
 ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+DOTDIRS=(
+	".config/nvim"
+	".tmux"
+	".vim"
+)
 
 # Remove all symbolic links in a directory pointing to anywhere in ROOT_DIR
 # Usage: removeLinks <targetdir>
@@ -12,6 +17,13 @@ removeLinks() {
 		if [[ "$(dirname $(realpath "$link"))" =~ "$ROOT_DIR" ]]; then
 			rm "$link"
 			echo "Removed $(basename "$link")"
+		fi
+	done
+
+	for dir in "${DOTDIRS[@]}"; do
+		if [[ "$(dirname "$(realpath "$target_dir/$dir")")" =~ "$ROOT_DIR" ]]; then
+			rm "$target_dir/$dir"
+			echo "Removed $dir"
 		fi
 	done
 }

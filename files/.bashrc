@@ -2,7 +2,8 @@
 [[ $- =~ i ]] || return
 
 # Since this script isn't guaranteed to be in $PWD, get accurate ROOT_DIR
-ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+DOTFILES_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+ROOT_DIR="$(realpath "$DOTFILES_DIR/..")"
 [[ -z "$RECORD" ]] && RECORD="yes"
 
 source "$ROOT_DIR/bash_include/path.sh"

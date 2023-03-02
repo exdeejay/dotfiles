@@ -1,11 +1,11 @@
 local opt = vim.opt
 local g = vim.g
-local config = require("core.utils").load_config()
 
-g.nvchad_theme = config.ui.theme
+g.nvchad_theme = 'onedark'
 g.toggle_theme_icon = "   "
-g.transparency = config.ui.transparency
+g.transparency = false
 g.theme_switcher_loaded = false
+g.mapleader = ' '
 
 opt.laststatus = 3 -- global statusline
 opt.showmode = false
@@ -47,7 +47,6 @@ opt.updatetime = 250
 -- when cursor reaches end/beginning of line
 opt.whichwrap:append "<>[]hl"
 
-g.mapleader = " "
 
 -- disable some builtin vim plugins
 local default_plugins = {
@@ -80,7 +79,7 @@ local default_plugins = {
 }
 
 for _, plugin in pairs(default_plugins) do
-  g["loaded_" .. plugin] = 1
+  vim.g["loaded_" .. plugin] = 1
 end
 
 local default_providers = {

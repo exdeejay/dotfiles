@@ -4,8 +4,14 @@
 ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 BACKUP_DIR="$ROOT_DIR/backup"
 DOTFILES_DIR="$ROOT_DIR/files"
+SCRIPTS_DIR="$ROOT_DIR/scripts"
 INSTALLMODULES_DIR="$ROOT_DIR/installmodules"
 GITHOOKS_DIR=".githooks" # has to be relative to repo directory ($ROOT_DIR)
+DOTDIRS=(
+	".config/nvim"
+	".tmux"
+	".vim"
+)
 
 
 
@@ -42,7 +48,7 @@ copyWithBackup() {
 installDotfiles() {
 	target_dir="$1"
 	# Copy all relevant dotfiles to the target directory
-	for file in $(find "$DOTFILES_DIR" -maxdepth 1 -type f | tail +2); do
+	for file in $(find "$DOTFILES_DIR" -maxdepth 1 -type f); do
 		case "$file" in
 			*.inc)
 				base_file="$(basename "${file::-4}")"
@@ -57,12 +63,19 @@ installDotfiles() {
 	done
 }
 
+installDotDirs() {
+	target_dir="$1"
+	for dir in "${DOTDIRS[@]}"; do
+		copyWithBackup "$DOTFILES_DIR/$dir" "$target_dir/$dir" backup
+	done
+}
+
 installDependencies() {
 	[[ -n "$(which apt 2>/dev/null)" ]] && installer=apt
 	[[ -n "$(which dnf 2>/dev/null)" ]] && installer=dnf
-	if [[ -n "$installer" && $(readYN "Install $installer dependencies?") == 'y' ]]; then
+	if [[ -n "$installer" && $(readYN "Install $installer dependencies?" 'n') == 'y' ]]; then
 		echo "Installing dependencies..."
-		packagelist="$DOTFILES_DIR/apt-dependencies"
+		packagelist="$ROOT_DIR/apt-dependencies"
 		if [[ "$installer" == "apt" ]]; then
 			sudo $installer update
 		fi
@@ -103,7 +116,7 @@ setupGitConfig() {
 
 
 # ensure readYN is on path
-export PATH="$DOTFILES_DIR/scripts:$PATH"
+export PATH="$SCRIPTS_DIR:$PATH"
 
 if [ "$OS_TYPE" = "msys" ]; then
 	echo "!!WARNING!! MSYS is not fully supported, use at your own risk!"
@@ -122,6 +135,7 @@ fi
 echo "Existing dotfiles will be copied to $(getRelativePath "$BACKUP_DIR")"
 echo "Installing dotfiles from files..."
 installDotfiles "$HOME"
+installDotDirs "$HOME"
 installDependencies
 runInstallModules
 setupGitConfig
