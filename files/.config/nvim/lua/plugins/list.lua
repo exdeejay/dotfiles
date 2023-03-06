@@ -1,5 +1,6 @@
 return {
 	'wbthomason/packer.nvim',
+	{ "nvim-lua/plenary.nvim", module = "plenary" },
 	'lewis6991/impatient.nvim',
 	'tpope/vim-sleuth',
 	{ "NvChad/extensions", module = { "telescope", "nvchad" } },
