@@ -1,6 +1,5 @@
 return {
 	'wbthomason/packer.nvim',
-	{ "nvim-lua/plenary.nvim", module = "plenary" },
 	'lewis6991/impatient.nvim',
 	'tpope/vim-sleuth',
 	{ "NvChad/extensions", module = { "telescope", "nvchad" } },
@@ -484,8 +483,6 @@ return {
 				headerPaddingBottom = { type = "padding", val = 2 },
 			}
 
-			options = require("core.utils").load_override(options, "goolord/alpha-nvim")
-
 			alpha.setup {
 				layout = {
 					options.headerPaddingTop,
@@ -502,10 +499,7 @@ return {
 		module = "Comment",
 		keys = { "gc", "gb" },
 		config = function()
-			local nvim_comment = require('Comment')
-			local options = {}
-			options = load_override(options, "numToStr/Comment.nvim")
-			nvim_comment.setup(options)
+			require('Comment').setup({})
 		end,
 		setup = function()
 			require("core.utils").load_mappings "comment"

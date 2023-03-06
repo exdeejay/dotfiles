@@ -59,7 +59,6 @@ M.merge_plugins = function(plugins)
   return final_table
 end
 
--- override plugin options table with custom ones
 M.load_override = function(options_table, name)
 	return options_table
 end
