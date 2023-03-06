@@ -128,25 +128,19 @@ return {
 		cmd = require("core.lazy_load").treesitter_cmds,
 		run = ":TSUpdate",
 		config = function()
-			local treesitter = require('nvim-treesitter.configs')
 			require("base46").load_highlight "treesitter"
-
-			local options = {
+			require('nvim-treesitter.configs').setup({
 				ensure_installed = {
 					"lua",
 				},
-
 				highlight = {
 					enable = true,
 					use_languagetree = true,
 				},
-
 				indent = {
 					enable = true,
 				},
-			}
-
-			treesitter.setup(options)
+			})
 		end,
 	},
 
@@ -294,8 +288,6 @@ return {
 		end,
 	},
 
-	-- load luasnips + cmp related in insert mode only
-
 	{ "rafamadriz/friendly-snippets",
 		module = { "cmp", "cmp_nvim_lsp" },
 		event = "InsertEnter",
@@ -304,7 +296,6 @@ return {
 	{ "hrsh7th/nvim-cmp",
 		after = "friendly-snippets",
 		config = function()
-			local cmp = require('cmp')
 			require("base46").load_highlight "cmp"
 
 			vim.o.completeopt = "menu,menuone,noselect"
@@ -323,7 +314,6 @@ return {
 			end
 
 			local cmp_window = require "cmp.utils.window"
-
 			cmp_window.info_ = cmp_window.info
 			cmp_window.info = function(self)
 				local info = self:info_()
@@ -331,7 +321,8 @@ return {
 				return info
 			end
 
-			local options = {
+			local cmp = require('cmp')
+			cmp.setup({
 				window = {
 					completion = {
 						border = border "CmpBorder",
@@ -340,11 +331,6 @@ return {
 					documentation = {
 						border = border "CmpDocBorder",
 					},
-				},
-				snippet = {
-					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
-					end,
 				},
 				formatting = {
 					format = function(_, vim_item)
@@ -367,8 +353,6 @@ return {
 					["<Tab>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_next_item()
-						elseif require("luasnip").expand_or_jumpable() then
-							vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Plug>luasnip-expand-or-jump", true, true, true), "")
 						else
 							fallback()
 						end
@@ -379,8 +363,6 @@ return {
 					["<S-Tab>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_prev_item()
-						elseif require("luasnip").jumpable(-1) then
-							vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Plug>luasnip-jump-prev", true, true, true), "")
 						else
 							fallback()
 						end
@@ -390,53 +372,17 @@ return {
 					}),
 				},
 				sources = {
-					{ name = "luasnip" },
 					{ name = "nvim_lsp" },
 					{ name = "buffer" },
 					{ name = "nvim_lua" },
 					{ name = "path" },
 				},
-			}
 
-			-- check for any override
-			options = require("core.utils").load_override(options, "hrsh7th/nvim-cmp")
-
-			cmp.setup(options)
-		end,
-	},
-
-	{ "L3MON4D3/LuaSnip",
-		wants = "friendly-snippets",
-		after = "nvim-cmp",
-		config = function()
-			local luasnip = require('luasnip')
-			local options = {
-				history = true,
-				updateevents = "TextChanged,TextChangedI",
-			}
-
-			options = load_override(options, "L3MON4D3/LuaSnip")
-			luasnip.config.set_config(options)
-			require("luasnip.loaders.from_vscode").lazy_load { paths = vim.g.luasnippets_path or "" }
-			require("luasnip.loaders.from_vscode").lazy_load()
-
-			vim.api.nvim_create_autocmd("InsertLeave", {
-				callback = function()
-					if
-						require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-						and not require("luasnip").session.jump_active
-						then
-						require("luasnip").unlink_current()
-					end
-				end,
 			})
-
 		end,
 	},
 
-	{ "saadparwaiz1/cmp_luasnip", after = "LuaSnip" },
-	{ "hrsh7th/cmp-nvim-lua", after = "cmp_luasnip" },
-	{ "hrsh7th/cmp-nvim-lsp", after = "cmp-nvim-lua" },
+	{ "hrsh7th/cmp-nvim-lsp" },
 	{ "hrsh7th/cmp-buffer", after = "cmp-nvim-lsp" },
 	{ "hrsh7th/cmp-path", after = "cmp-buffer" },
 
