@@ -1,22 +1,24 @@
 set nocompatible
 
+let mapleader = " "
+
 set ignorecase
 set smartcase
-
 set backspace=indent,eol,start
-
+set whichwrap+=<,>,h,l
 set number
 set hlsearch
-
+set incsearch
+set magic
+set showmatch
+set mat=2
 set hidden
 set splitbelow
 set splitright
 set nowrap
-
+set encoding=utf8
 set display=lastline
-
 set background=dark
-
 "size of <tab>
 set tabstop=4
 "size of reindenting and << >> ==
@@ -26,31 +28,41 @@ set shiftround
 set noexpandtab
 "keep indentation of last line
 set autoindent
+set smartindent
 "enable filetype plugin
 "plugin customization available in ~/.vim/after/ftplugin
-filetype plugin indent on
+filetype plugin on
+filetype indent on
 syntax on
 packadd! matchit
 
+set autoread
+au FocusGained,BufEnter * checktime
+set wildmenu
+set ruler
+set cmdheight=1
 set ttyfast
 set lazyredraw
-
 set mouse=a
 set ttymouse=sgr
-
-set backup
-set backupdir=$HOME/.vim/files/backup/
-set backupext=-vimbackup
-set backupskip=
-set directory=$HOME/.vim/files/swap//
-set updatecount=100
+set nobackup
+set writebackup
+set noswapfile
 set undofile
 set undodir=$HOME/.vim/files/undo/
 set viminfo='100,n$HOME/.vim/files/info/viminfo
 
-"<Leader> is backslash (\)
-nnoremap <Leader>s :source $MYVIMRC<CR>
-nnoremap <Leader>v :e $MYVIMRC<CR>
+nnoremap <Leader>pp :setlocal paste!<cr>
 vnoremap <Leader>y :OSCYank<CR>
 nnoremap <Leader>Y v$:OSCYank<CR>
 nnoremap <Leader>yy V:OSCYank<CR>
+
+call plug#begin()
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'chr4/nginx.vim'
+Plug 'wellle/tmux-complete.vim'
+Plug 'mbbill/undotree'
+Plug 'ojroques/vim-oscyank'
+Plug 'lifepillar/vim-cheat40'
+call plug#end()

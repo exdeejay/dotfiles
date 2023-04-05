@@ -1,7 +1,10 @@
 backup
 files/.vim/.netrwhist
 files/.vim/files/backup/*
-files/.vim/files/info/viminfo
+!files/.vim/files/backup/.gitkeep
+files/.vim/files/info/*
+!files/.vim/files/info/.gitkeep
 files/.vim/files/undo/*
-files/.vim/files/swap/*
-**/*.pyc
+!files/.vim/files/undo/.gitkeep
+files/.vim/plugged
+*.pyc
