@@ -47,7 +47,6 @@ set ttimeout
 set ttimeoutlen=50
 set nobackup
 set laststatus=2
-set termguicolors
 set writebackup
 set swapfile
 set directory=$HOME/.vim/files/swap/
