@@ -1,4 +1,4 @@
 #/bin/bash
 
-[[ -z "$(which nvm)" ]]
+[[ -d "$HOME/.nvm" ]]
 exit $?
