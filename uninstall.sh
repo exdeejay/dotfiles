@@ -3,7 +3,6 @@
 # Since this script isn't guaranteed to be in $PWD, get accurate ROOT_DIR
 ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 DOTDIRS=(
-	".config/nvim"
 	".tmux"
 	".vim"
 )

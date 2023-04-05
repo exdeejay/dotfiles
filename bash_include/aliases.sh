@@ -5,7 +5,6 @@ alias egrep='grep -E'
 alias diff='diff --color=auto'
 alias ip='ip -c'
 alias gdb='gdb -q'
-#alias vim="echo \"don't you mean \\\`nvim\\\`?\" #"
 
 alias ..='cd ..'
 alias cd..='cd ..'

@@ -8,7 +8,6 @@ SCRIPTS_DIR="$ROOT_DIR/scripts"
 INSTALLMODULES_DIR="$ROOT_DIR/installmodules"
 GITHOOKS_DIR=".githooks" # has to be relative to repo directory ($ROOT_DIR)
 DOTDIRS=(
-	".config/nvim"
 	".tmux"
 	".vim"
 )
