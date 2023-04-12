@@ -251,6 +251,8 @@ let g:bufferline_echo = 0
 autocmd BufLeave *.{c,cpp} mark C
 autocmd BufLeave *.h       mark H
 
+set t_Co=16
+
 set balloonevalterm
 " Styled and colored underline support
 let &t_AU = "\e[58:5:%dm"
