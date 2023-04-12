@@ -180,6 +180,8 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec --no-startup-id $HOME/.config/i3/wallpaper.sh
 
 default_border none
-#gaps inner 8
-#smart_gaps on
-#workspace 1 output primary
+
+gaps inner 8
+smart_gaps on
+workspace 1 output primary
+
