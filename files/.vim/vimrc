@@ -72,9 +72,9 @@ let g:airline_theme='deus'
 let g:coc_disable_startup_warning = 1
 
 nnoremap <leader>pp :setlocal paste!<cr>
-vnoremap <leader>y :OSCYank<CR>
-nnoremap <leader>Y v$:OSCYank<CR>
-nnoremap <leader>yy V:OSCYank<CR>
+vnoremap <leader>y :OSCYankVisual<CR>
+nnoremap <leader>Y v$:OSCYankVisual<CR>
+nnoremap <leader>yy V:OSCYankVisual<CR>
 "Split window right
 nnoremap <leader>v <C-w>v<C-w>l
 "Split window below
@@ -227,6 +227,7 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+let g:bufferline_echo = 0
 
 " Mappings for CoCList
 " Show all diagnostics
