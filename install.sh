@@ -5,7 +5,7 @@ ROOT_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 BACKUP_DIR="$ROOT_DIR/backup"
 DOTFILES_DIR="$ROOT_DIR/files"
 SCRIPTS_DIR="$ROOT_DIR/scripts"
-INSTALLMODULES_DIR="$ROOT_DIR/installmodules"
+INSTALLMODULES_DIR="$ROOT_DIR/modules"
 GITHOOKS_DIR=".githooks" # has to be relative to repo directory ($ROOT_DIR)
 DOTDIRS=(
 	".tmux"
@@ -67,6 +67,16 @@ installDotDirs() {
 	for dir in "${DOTDIRS[@]}"; do
 		copyWithBackup "$DOTFILES_DIR/$dir" "$target_dir/$dir" backup
 	done
+}
+
+overlayConfigDir() {
+	target_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
+	pushd "$DOTFILES_DIR/.config" 2>/dev/null
+	for file in $(find . -type f); do
+		mkdir -p "$(dirname "$target_dir/$file")"
+		copyWithBackup "$file" "$target_dir/$file" backup
+	done
+	popd 2>/dev/null
 }
 
 installDependencies() {
@@ -135,7 +145,11 @@ echo "Existing dotfiles will be copied to $(getRelativePath "$BACKUP_DIR")"
 echo "Installing dotfiles from files..."
 installDotfiles "$HOME"
 installDotDirs "$HOME"
+echo "Overlaying .config files..."
+overlayConfigDir
+echo "Installing dependencies..."
 installDependencies
+echo "Running install modules..."
 runInstallModules
 setupGitConfig
 

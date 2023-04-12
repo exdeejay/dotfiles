@@ -22,7 +22,14 @@ removeLinks() {
 	for dir in "${DOTDIRS[@]}"; do
 		if [[ "$(dirname "$(realpath "$target_dir/$dir")")" =~ "$ROOT_DIR" ]]; then
 			rm "$target_dir/$dir"
-			echo "Removed $dir"
+			echo "Removed $dir/"
+		fi
+	done
+
+	for link in $(find "${XDG_CONFIG_HOME:-$HOME/.config}" -type l); do
+		if [[ "$(dirname $(realpath "$link"))" =~ "$ROOT_DIR" ]]; then
+			rm "$link"
+			echo "Removed .config/$(realpath --relative-to "${XDG_CONFIG_HOME:-$HOME/.config}" "$link")"
 		fi
 	done
 }
