@@ -6,6 +6,7 @@ DOTFILES_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 ROOT_DIR="$(realpath "$DOTFILES_DIR/..")"
 [[ -z "$RECORD" ]] && RECORD="yes"
 
+source "$ROOT_DIR/bash_include/env.sh"
 source "$ROOT_DIR/bash_include/path.sh"
 source "$ROOT_DIR/bash_include/aliases.sh"
 source "$ROOT_DIR/bash_include/shopts.sh"
