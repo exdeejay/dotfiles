@@ -18,6 +18,7 @@ export LESS_TERMCAP_us=$'\e[1;4;36m'
 
 export EDITOR=vim
 export VISUAL=vim
+export TERMINAL=kitty
 
 export FZF_DEFAULT_OPTS='-m --reverse'
 
