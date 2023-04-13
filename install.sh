@@ -71,12 +71,12 @@ installDotDirs() {
 
 overlayConfigDir() {
 	target_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
-	pushd "$DOTFILES_DIR/.config" 2>/dev/null
+	pushd "$DOTFILES_DIR/.config" >/dev/null
 	for file in $(find . -type f); do
 		mkdir -p "$(dirname "$target_dir/$file")"
 		copyWithBackup "$file" "$target_dir/$file" backup
 	done
-	popd 2>/dev/null
+	popd >/dev/null
 }
 
 installDependencies() {
