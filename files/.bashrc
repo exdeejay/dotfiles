@@ -8,6 +8,7 @@ ROOT_DIR="$(realpath "$DOTFILES_DIR/..")"
 
 source "$ROOT_DIR/bash_include/env.sh"
 source "$ROOT_DIR/bash_include/path.sh"
+source "$ROOT_DIR/bash_include/colors.sh"
 source "$ROOT_DIR/bash_include/aliases.sh"
 source "$ROOT_DIR/bash_include/shopts.sh"
 source "$ROOT_DIR/bash_include/functions.sh"

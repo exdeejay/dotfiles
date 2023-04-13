@@ -180,6 +180,7 @@ bindsym $mod+r mode "resize"
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec --no-startup-id $HOME/.config/i3/wallpaper.sh
+exec --no-startup-id /usr/libexec/gsd-xsettings &
 
 default_border none
 
