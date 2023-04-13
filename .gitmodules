@@ -1,27 +1,9 @@
-[submodule ".vim/pack/plugins/start/cheat40"]
-	path = .vim/pack/plugins/start/cheat40
-	url = https://github.com/lifepillar/vim-cheat40.git
-[submodule ".vim/pack/plugins/start/tmux-complete.vim"]
-	path = .vim/pack/plugins/start/tmux-complete.vim
-	url = https://github.com/wellle/tmux-complete.vim.git
-[submodule ".vim/pack/plugins/start/undotree"]
-	path = .vim/pack/plugins/start/undotree
-	url = https://github.com/mbbill/undotree.git
-[submodule ".vim/pack/plugins/start/ctrlp.vim"]
-	path = .vim/pack/plugins/start/ctrlp.vim
-	url = https://github.com/ctrlpvim/ctrlp.vim.git
-[submodule ".vim/pack/plugins/start/nerdtree"]
-	path = .vim/pack/plugins/start/nerdtree
-	url = https://github.com/preservim/nerdtree
-[submodule ".vim/pack/plugins/start/nginx.vim"]
-	path = .vim/pack/plugins/start/nginx.vim
-	url = https://github.com/chr4/nginx.vim.git
-[submodule ".vim/pack/plugins/start/vim-oscyank"]
-	path = .vim/pack/plugins/start/vim-oscyank
-	url = https://github.com/ojroques/vim-oscyank
-[submodule "base16-shell"]
-	path = base16-shell
-	url = https://github.com/tinted-theming/base16-shell
 [submodule "files/.tmux/plugins/tpm"]
 	path = files/.tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
+[submodule "colors/base16-shell"]
+	path = colors/base16-shell
+	url = https://github.com/tinted-theming/base16-shell
+[submodule "colors/base16-fzf"]
+	path = colors/base16-fzf
+	url = https://github.com/tinted-theming/base16-fzf

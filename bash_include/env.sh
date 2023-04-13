@@ -15,5 +15,5 @@ export EDITOR=vim
 export VISUAL=vim
 export TERMINAL=kitty
 
-export FZF_DEFAULT_OPTS='-m --reverse'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS -m --reverse"
 

@@ -5,6 +5,7 @@ alias egrep='grep -E'
 alias diff='diff --color=auto'
 alias ip='ip -c'
 alias gdb='gdb -q'
+alias tmux='tmux -2'
 
 alias ..='cd ..'
 alias cd..='cd ..'
