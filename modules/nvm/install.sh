@@ -1,5 +1,7 @@
 #/bin/bash
 
-echo "v0.39.2"
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash &&
-	sed -i "$(($(wc -l < "$HOME/.bashrc") - 3)),\$d" "$HOME/.bashrc"
+git clone https://github.com/nvm-sh/nvm.git ~/.nvm
+pushd ~/.nvm 2>/dev/null
+git checkout v0.39.4
+popd 2>/dev/null
+

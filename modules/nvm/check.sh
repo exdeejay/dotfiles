@@ -1,4 +1,4 @@
 #/bin/bash
 
-[[ -d "$HOME/.nvm" ]]
+[[ -n "$(hash nvm 2>/dev/null)" ]]
 exit $?
