@@ -27,5 +27,5 @@ if [ -d "$HOME/.bash_include" ]; then
 fi
 
 # Enter tmux
-[[ -z "$DETACH" && -n "$(hash tmux 2>/dev/null)" ]] && attach || unset DETACH
+[[ -z "$DETACH" && -n "$(which tmux | grep -Ev "^alias" 2>/dev/null)" ]] && attach || unset DETACH
 
