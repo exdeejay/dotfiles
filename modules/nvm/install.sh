@@ -1,9 +1,12 @@
 #/bin/bash
+set -eu
+
+if ! command -v git >/dev/null 2>&1; then
+    echo "git not installed! Skipping nvm installation..." >/dev/stderr
+    exit 1
+fi
 
 git clone https://github.com/nvm-sh/nvm.git $HOME/.nvm
-pushd $HOME/.nvm &>/dev/null
-git checkout v0.39.4 &>/dev/null
-popd &>/dev/null
 
 if [[ $(readYN "[+] Install latest version of node?" 'y') == 'y' ]]; then
 	source $HOME/.nvm/nvm.sh

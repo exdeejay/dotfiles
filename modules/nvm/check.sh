@@ -1,4 +1,5 @@
 #/bin/bash
+set -eu
 
-[[ -n "$(which nvm | grep -Ev "^alias" 2>/dev/null)" ]]
+command -v nvm >/dev/null 2>&1
 exit $?

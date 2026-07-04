@@ -1,4 +1,5 @@
 #/bin/bash
+set -eu
 
-[[ "$(which python3)" && "$(which asciinema)" ]]
+command -v python3 >/dev/null 2>&1 && command -v asciinema >/dev/null 2>&1
 exit $?
