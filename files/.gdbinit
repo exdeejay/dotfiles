@@ -11,4 +11,3 @@ end
 define init-pwndbg
 	source ~/.pwndbg/gdbinit.py
 end
-

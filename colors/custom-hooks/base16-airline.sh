@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 BASE16_SHELL_VIM_AIRLINE_PATH="$BASE16_CONFIG_PATH/set_airline_theme.vim"
 
 if [ -f "$BASE16_SHELL_VIM_AIRLINE_PATH" ]; then
-  touch "$BASE16_SHELL_VIM_AIRLINE_PATH"
+    touch "$BASE16_SHELL_VIM_AIRLINE_PATH"
 fi
 
 read current_theme_name < "$BASE16_SHELL_THEME_NAME_PATH"

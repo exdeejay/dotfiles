@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 for hook in "$BASE16_SHELL_PATH/hooks"/*.sh; do
-	[ -x "$hook" ] && . "$hook"
+    [[ -r "$hook" ]] && source "$hook"
 done
