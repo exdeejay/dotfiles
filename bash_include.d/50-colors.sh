@@ -1,14 +1,28 @@
 #!/bin/bash
 # Load base16 color profile
 
-BASE16_SHELL_PATH="$ROOT_DIR/colors/tinted-shell"
-if [[ ! -d "$BASE16_SHELL_PATH" ]]; then
-    unset BASE16_SHELL_PATH
-else
-    if [[ -n "$PS1" && -s "$BASE16_SHELL_PATH/profile_helper.sh" ]]; then
-        BASE16_THEME_DEFAULT="atelier-lakeside"
-        BASE16_SHELL_HOOKS_PATH="$ROOT_DIR/colors/custom-hooks"
-        BASE16_FZF_PATH="$ROOT_DIR/colors/tinted-fzf"
-        source "$BASE16_SHELL_PATH/profile_helper.sh"
+# Tinty isn't able to apply environment variables to your shell due to
+# the way shell sub-processes work. This is a work around by running
+# Tinty through a function and then executing the shell scripts.
+tinty_source_shell_theme() {
+    newer_file=$(mktemp)
+    tinty $@
+    subcommand="$1"
+
+    if [ "$subcommand" = "apply" ] || [ "$subcommand" = "init" ]; then
+        tinty_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/tinted-theming/tinty"
+
+        while read -r script; do
+            source "$script"
+        done < <(find "$tinty_data_dir" -maxdepth 1 -type f -o -type l -name "*.sh" -newer "$newer_file")
+
+        unset tinty_data_dir
     fi
+
+    unset subcommand
+}
+
+if command -v tinty >/dev/null 2>&1; then
+    tinty_source_shell_theme "init" > /dev/null
+    alias tinty=tinty_source_shell_theme
 fi

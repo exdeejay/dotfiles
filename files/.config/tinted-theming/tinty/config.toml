@@ -1,0 +1,34 @@
+shell = "sh -c '{}'"
+default-scheme = "base16-atelier-lakeside"
+
+[[items]]
+name = "tinted-shell"
+path = "https://github.com/tinted-theming/tinted-shell"
+hook = "source %f"
+supported-systems = ["base16", "base24"]
+themes-dir = "scripts"
+
+[[items]]
+name = "tinted-vim"
+path = "~/.vim/plugged/tinted-vim"
+themes-dir = "colors"
+supported-systems = ["base16", "base24"]
+
+[[items]]
+name = "tinted-tmux"
+path = "https://github.com/tinted-theming/tinted-tmux"
+themes-dir = "colors"
+hook = "tmux source-file ~/.tmux.conf"
+supported-systems = ["base16", "base24", "tinted8"]
+
+[[items]]
+name = "tinted-fzf"
+path = "https://github.com/tinted-theming/tinted-fzf"
+hook = "source %f"
+themes-dir = "sh"
+
+[[items]]
+name = "base16-vim-airline-themes"
+path = "~/.vim/plugged/base16-vim-airline-themes"
+themes-dir = "autoload/airline/themes"
+

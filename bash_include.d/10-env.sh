@@ -13,6 +13,7 @@ HISTIGNORE="&:ls:[bf]g:exit"
 
 export LESSHISTFILE="-"
 
+export TINTED_TMUX_OPTION_STATUSBAR=1
 export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS -m --reverse"
 
 export WTTR_PARAMS='m'

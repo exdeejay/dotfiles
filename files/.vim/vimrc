@@ -7,27 +7,51 @@ source $VIMRUNTIME/defaults.vim
 
 
 " ---------- Plugins ---------- "
-" Enable matchit stock plugin
+" matchit: better % command handling
 packadd! matchit
-" Enable manpage viewer plugin
+" man: enable manpage viewer plugin
 runtime! ftplugin/man.vim
 call plug#begin()
+Plug 'junegunn/vim-plug'
+" fugitive: git integration
 Plug 'tpope/vim-fugitive'
+" gitgutter: show git changes in sidebar
 Plug 'airblade/vim-gitgutter'
+" surround: add, change, or remove surrounding characters like quotes to an object
 Plug 'tpope/vim-surround'
-Plug 'wellle/tmux-complete.vim'
-Plug 'mbbill/undotree'
+" oscyank: yank into the connected terminal's system clipboard with OSC
 Plug 'ojroques/vim-oscyank'
+" cheat40: access vim cheatsheet with :Cheat40
 Plug 'lifepillar/vim-cheat40'
+" airline: nice statusbar
 Plug 'vim-airline/vim-airline'
+" airline-themes: themes for airline
 Plug 'vim-airline/vim-airline-themes'
+Plug 'dawikur/base16-vim-airline-themes'
+" bufferline: show open buffers in the statusbar
 Plug 'bling/vim-bufferline'
+" ale: LSP integration for code navigation and operations
 Plug 'dense-analysis/ale'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'rhysd/vim-lsp-ale'
+" tinted-vim: colorscheme manager
 Plug 'tinted-theming/tinted-vim'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'preservim/nerdcommenter'
+" sneak: `f` command but with two characters
 Plug 'justinmk/vim-sneak'
+" bracketed-paste: automatically :set paste when pasting in xterm-based terminals
+Plug 'ConradIrwin/vim-bracketed-paste'
+" tmux-complete: complete words in other tmux panes with <C-X><C-U>
+Plug 'wellle/tmux-complete.vim'
+" kotlin-vim: Kotlin filetype plugin
+Plug 'udalov/kotlin-vim'
+" vim-healthcheck: neovim's :checkhealth in vim for checking plugin status
+Plug 'rhysd/vim-healthcheck'
+"Plug 'christoomey/vim-tmux-navigator'
+"Plug 'preservim/nerdcommenter'
+"Plug 'mbbill/undotree'
 call plug#end()
 " plug#end() automatically sets filetype plugin indent on and syntax on
 
@@ -136,7 +160,16 @@ set undofile
 set undodir=$HOME/.vim/files/undo/
 " When non-empty, the viminfo file is read upon startup and written when exiting Vim
 set viminfo='100,n$HOME/.vim/files/info/viminfo
-
+" Prevent bufferline plugin from using the command bar (it's already in the airline statusbar)
+let g:bufferline_echo = 0
+let g:ale_linters = {
+\   'kotlin': [],
+\}
+let g:lsp_settings = {
+\   'root_uri_patterns': {
+\       'kotlin-lsp': ['build.gradle', 'build.gradle.kts']
+\   },
+\}
 
 " ---------- Mappings ---------- "
 " Q : format selection
@@ -160,20 +193,13 @@ nnoremap <silent> <leader>yy V:OSCYankVisual<CR>
 nnoremap <leader>v <C-w>v<C-w>l
 " <leader>s : split window below
 nnoremap <leader>s <C-w>s
+" <leader>c : close preview window
+nnoremap <leader>c :pclose<CR>
 " Switch windows
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-
-" Make n and N always search in one direction
-" (as opposed to forward/opposite the original search's direction)
-nnoremap <expr> n  'Nn'[v:searchforward]
-xnoremap <expr> n  'Nn'[v:searchforward]
-onoremap <expr> n  'Nn'[v:searchforward]
-nnoremap <expr> N  'nN'[v:searchforward]
-xnoremap <expr> N  'nN'[v:searchforward]
-onoremap <expr> N  'nN'[v:searchforward]
 
 " <leader>m : edit the given register (" if not specified)
 nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
@@ -182,21 +208,21 @@ nnoremap <leader>m  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v
 xnoremap < <gv
 xnoremap > >gv
 
-" Ale commands
-nnoremap <silent> <leader>gd :ALEGoToDefinition<CR>
-nnoremap <silent> <leader>gr :ALEFindReferences<CR>
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
+imap <c-@> <Plug>(asyncomplete_force_refresh)
 
 
 " ---------- Autocmds ---------- "
 augroup myAutocmds
-    autocmd!
+    au!
     " Source vimrc on save
     autocmd BufWritePost $MYVIMRC source $MYVIMRC
     " Set mark C on last visited .c/.cpp file
-    autocmd BufLeave *.{c,cpp} mark C
+    autocmd BufLeave *.{c,cpp}  mark C
     " Set mark H on last visited .h file
-    autocmd BufLeave *.h       mark H
-    autocmd Filetype c,python setlocal omnifunc=ale#completion#OmniFunc
+    autocmd BufLeave *.h        mark H
 augroup END
 
 
@@ -208,9 +234,38 @@ endif
 let g:airline_symbols.space = "\ua0"
 
 
+" ---------- vim-lsp config ---------- "
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+
 " ---------- Terminfo config ---------- "
-" Number of terminal colors
-set t_Co=16
+" Limit number of terminal colors to 16
+"set t_Co=16
 
 " Styled and colored underline support
 let &t_AU = "\e[58:5:%dm"
@@ -254,13 +309,41 @@ let &t_ut=''
 
 
 " ---------- Tinted Theming config ---------- "
-" Set base color scheme
-if filereadable(expand("$HOME/.config/tinted-theming/set_theme.vim"))
-  let base16colorspace=256
-  source $HOME/.config/tinted-theming/set_theme.vim
-endif
-" Set airline color theme
-if filereadable(expand("$HOME/.config/tinted-theming/set_airline_theme.vim"))
-  let base16colorspace=256
-  source $HOME/.config/tinted-theming/set_airline_theme.vim
-endif
+let g:default_theme = "base16-atelier-lakeside"
+
+function! GetTintyTheme()
+  let l:theme_name = system("tinty current &> /dev/null && tinty current")
+
+  if v:shell_error != 0
+    return g:default_theme
+  else
+    return trim(l:theme_name)
+  endif
+endfunction
+
+function! HandleFocusGained()
+  let l:new_theme_name = GetTintyTheme()
+  let l:current_theme_name = g:colors_name
+
+  if l:current_theme_name != l:new_theme_name
+    execute "colorscheme " . l:new_theme_name
+  endif
+endfunction
+
+function! Main()
+  set termguicolors
+  let g:tinted_colorspace = 256
+  let l:current_theme_name = GetTintyTheme()
+
+  execute "colorscheme " . l:current_theme_name
+
+  augroup TintyThemeChange
+    autocmd!
+    autocmd FocusGained * call HandleFocusGained()
+  augroup END
+endfunction
+
+call Main()
+
+"let g:lsp_log_verbose = 1
+"let g:lsp_log_file = expand('~/vim-lsp.log')
